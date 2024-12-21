@@ -2,8 +2,10 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { useAction } from 'next-safe-action/hooks'
 import { Fragment, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { FakeDash, OTPInput, Slot } from '@/components/input-opt'
@@ -16,8 +18,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
+import { verifyAuthenticationCodeAction } from '../actions/verify-authentication-code-action'
+
 const authenticateFormSchema = z.object({
-  opt: z.string(),
+  code: z.string(),
 })
 
 type AuthenticateForm = z.infer<typeof authenticateFormSchema>
@@ -25,12 +29,30 @@ type AuthenticateForm = z.infer<typeof authenticateFormSchema>
 export function VerifyAuthenticationCode() {
   const formRef = useRef<HTMLFormElement>(null)
 
-  const { handleSubmit, control } = useForm<AuthenticateForm>({
+  const { handleSubmit, control, reset } = useForm<AuthenticateForm>({
     resolver: zodResolver(authenticateFormSchema),
   })
 
+  const { executeAsync } = useAction(verifyAuthenticationCodeAction, {
+    onError: ({ error }) => {
+      toast.error(error.serverError)
+      reset()
+    },
+  })
+
   const handleAuthenticate = async (data: AuthenticateForm) => {
-    console.log(data)
+    const { code } = data
+
+    toast.promise(
+      async () => {
+        await executeAsync({
+          code,
+        })
+      },
+      {
+        loading: 'Checking your code...',
+      },
+    )
   }
 
   return (
@@ -57,7 +79,7 @@ export function VerifyAuthenticationCode() {
       </div>
 
       <Controller
-        name="opt"
+        name="code"
         control={control}
         defaultValue=""
         render={({ field }) => (

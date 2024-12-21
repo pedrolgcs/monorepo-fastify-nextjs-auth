@@ -1,13 +1,13 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertTriangleIcon, Loader2Icon } from 'lucide-react'
+import { Loader2Icon } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { InputError } from '@/components/input-error'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,8 +23,11 @@ const signInFormSchema = z.object({
 type SignInForm = z.infer<typeof signInFormSchema>
 
 export function SignIn() {
-  const { hasErrored, result, isPending, executeAsync } =
-    useAction(signInAction)
+  const { isPending, executeAsync } = useAction(signInAction, {
+    onError: ({ error }) => {
+      toast.error(error.serverError)
+    },
+  })
 
   const { register, handleSubmit, formState } = useForm<SignInForm>({
     resolver: zodResolver(signInFormSchema),
@@ -43,16 +46,6 @@ export function SignIn() {
 
   return (
     <form className="w-full space-y-4" onSubmit={handleSubmit(handleSignIn)}>
-      {hasErrored && (
-        <Alert variant="destructive">
-          <AlertTriangleIcon className="size-4" />
-          <AlertTitle>Sign in failed</AlertTitle>
-          <AlertDescription>
-            <p>{result.serverError}</p>
-          </AlertDescription>
-        </Alert>
-      )}
-
       <div className="space-y-2">
         <Label htmlFor="email">E-mail</Label>
         <Input

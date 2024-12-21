@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
+import { signInWithPassword } from '@/http/requests/sign-in-with-password'
 import { actionClient } from '@/lib/safe-action'
 
 const schema = z.object({
@@ -17,8 +18,7 @@ export const signInAction = actionClient.schema(schema).action(
       parsedInput: { email },
     } = data
 
-    console.log(email)
-    // POST IN SEND AUTHENTICATION CODE
+    await signInWithPassword({ email })
   },
   {
     onSuccess: () => {
