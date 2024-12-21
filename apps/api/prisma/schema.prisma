@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String  @id @default(uuid())
+  email String  @unique
+  name  String?
+
+  @@map("users")
+}
+
+model OPTCode {
+  id        String    @id @default(uuid())
+  code      String    @unique
+  email     String
+  expiresAt DateTime  @map("expires_at")
+  used_at   DateTime?
+  ipAddress String?   @map("id_address")
+  createdAt DateTime  @map("created_at")
+
+  @@map("otp_codes")
+}
