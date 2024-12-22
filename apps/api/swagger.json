@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Nextjs Fastify API",
-    "description": "Authenticate using magic link template",
+    "title": "OPT Authenticate API",
+    "description": "Authenticate using OPT",
     "version": "1.0.0"
   },
   "components": {
@@ -40,6 +40,47 @@
                     "status"
                   ],
                   "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/password": {
+      "post": {
+        "operationId": "authenticateWithPassword",
+        "summary": "Authenticate with e-mail and password",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                },
+                "required": [
+                  "email"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "not": {}
                 }
               }
             }

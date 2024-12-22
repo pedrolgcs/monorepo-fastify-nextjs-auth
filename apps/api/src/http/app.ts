@@ -26,8 +26,8 @@ app.register(fastifyCors)
 app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: 'Nextjs Fastify API',
-      description: 'Authenticate using magic link template',
+      title: 'OPT Authenticate API',
+      description: 'Authenticate using OPT',
       version: '1.0.0',
     },
     components: {
