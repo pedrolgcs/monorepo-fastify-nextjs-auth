@@ -1,5 +1,6 @@
-import crypto from 'node:crypto'
+import { customAlphabet } from 'nanoid'
 
 export function generateOPTCode(): string {
-  return crypto.randomInt(10000000, 100000000).toString()
+  const customNanoid = customAlphabet('0123456789ABCDF', 8)
+  return customNanoid()
 }
