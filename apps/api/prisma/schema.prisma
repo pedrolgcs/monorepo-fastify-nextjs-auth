@@ -17,7 +17,7 @@ model User {
   @@map("users")
 }
 
-model OPTCode {
+model OptCode {
   id        String    @id @default(uuid())
   code      String    @unique
   email     String

@@ -10,6 +10,8 @@ import { retryUntilSuccess } from '@/utils/retry-until-success'
 
 import { MaxRetriesWhenGenerateOPTCodeError } from '../_errors/max-retries-when-generate-opt-code'
 
+const MAX_RETRIES_WHEN_GENERATE_OPT_CODE = 3
+
 const bodySchema = z.object({
   email: z.string().email(),
 })
@@ -33,7 +35,7 @@ export async function authenticateWithPassword(app: FastifyTypedInstance) {
 
       try {
         await retryUntilSuccess<void>(async () => {
-          const { code } = await prisma.oPTCode.create({
+          const { code } = await prisma.optCode.create({
             data: {
               email,
               code: generateOPTCode(),
@@ -44,7 +46,6 @@ export async function authenticateWithPassword(app: FastifyTypedInstance) {
 
           resendMailClient.sendEmail({
             to: {
-              name: 'Resend',
               email: ['delivered@resend.dev'],
             },
             subject: 'OPT Code',
@@ -55,7 +56,7 @@ export async function authenticateWithPassword(app: FastifyTypedInstance) {
               },
             },
           })
-        }, 3)
+        }, MAX_RETRIES_WHEN_GENERATE_OPT_CODE)
       } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           if (error.code === 'P2002') {

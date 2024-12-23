@@ -12,7 +12,7 @@ const VIEWS_PATH = path.resolve(__dirname, 'views')
 
 type SendMailParams = {
   to: {
-    name: string
+    name?: string
     email: string[]
   }
   subject: string
