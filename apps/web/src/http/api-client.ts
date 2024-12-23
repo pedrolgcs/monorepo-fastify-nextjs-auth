@@ -1,25 +1,12 @@
-import { type CookiesFn, getCookie } from 'cookies-next'
 import ky from 'ky'
 
 export const api = ky.create({
   prefixUrl: 'http://localhost:3333',
+  credentials: 'include',
   hooks: {
     beforeRequest: [
-      async (request) => {
+      async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000)) // TODO: remove
-
-        let cookiesStore: CookiesFn | undefined
-
-        if (typeof window === 'undefined') {
-          const { cookies: serverCookies } = await import('next/headers')
-          cookiesStore = serverCookies
-        }
-
-        const token = getCookie('@saas:token', { cookies: cookiesStore })
-
-        if (token) {
-          request.headers.set('Authorization', `Bearer ${token}`)
-        }
       },
     ],
     afterResponse: [

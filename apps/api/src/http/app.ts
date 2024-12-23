@@ -1,3 +1,4 @@
+import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
 import fastifyJWT from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
@@ -20,7 +21,25 @@ app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
 // Cors
-app.register(fastifyCors)
+app.register(fastifyCors, {
+  origin: 'http://localhost:3000',
+  credentials: true,
+})
+
+// JWT
+app.register(fastifyJWT, {
+  secret: '0193ea55-540d-7449-af3c-172e9a8e39cf',
+  cookie: {
+    cookieName: 'refreshToken',
+    signed: false,
+  },
+  sign: {
+    expiresIn: '10m',
+  },
+})
+
+// Cookies
+app.register(fastifyCookie)
 
 // Swagger
 app.register(fastifySwagger, {
@@ -45,11 +64,6 @@ app.register(fastifySwagger, {
 
 app.register(fastifySwaggerUI, {
   routePrefix: '/docs',
-})
-
-// JWT
-app.register(fastifyJWT, {
-  secret: '0193ea55-540d-7449-af3c-172e9a8e39cf',
 })
 
 // Errors

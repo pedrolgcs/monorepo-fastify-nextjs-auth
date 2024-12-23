@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { useAction } from 'next-safe-action/hooks'
 import { Fragment, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -17,8 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-
-import { verifyAuthenticationCodeAction } from '../actions/verify-authentication-code-action'
+import { useVerifyOptCodeMutation } from '@/http/hooks/use-verify-opt-code-mutation'
 
 const authenticateFormSchema = z.object({
   code: z.string(),
@@ -29,28 +27,22 @@ type AuthenticateForm = z.infer<typeof authenticateFormSchema>
 export function VerifyAuthenticationCode() {
   const formRef = useRef<HTMLFormElement>(null)
 
-  const { handleSubmit, control, reset } = useForm<AuthenticateForm>({
-    resolver: zodResolver(authenticateFormSchema),
-  })
+  const { mutateAsync: verifyAuthenticationCode } = useVerifyOptCodeMutation()
 
-  const { executeAsync } = useAction(verifyAuthenticationCodeAction, {
-    onError: ({ error }) => {
-      toast.error(error.serverError)
-      reset()
-    },
+  const { handleSubmit, control } = useForm<AuthenticateForm>({
+    resolver: zodResolver(authenticateFormSchema),
   })
 
   const handleAuthenticate = async (data: AuthenticateForm) => {
     const { code } = data
 
     toast.promise(
-      async () => {
-        await executeAsync({
-          code,
-        })
-      },
+      verifyAuthenticationCode({
+        code,
+      }),
       {
-        loading: 'Checking your code...',
+        loading: 'Verifying authentication code...',
+        error: (error) => error?.message || 'Something went wrong',
       },
     )
   }
@@ -85,7 +77,7 @@ export function VerifyAuthenticationCode() {
         render={({ field }) => (
           <OTPInput
             autoFocus
-            maxLength={6}
+            maxLength={8}
             textAlign="center"
             containerClassName="group flex items-center has-[:disabled]:opacity-30"
             onComplete={() => formRef.current?.requestSubmit()}
@@ -93,7 +85,7 @@ export function VerifyAuthenticationCode() {
             render={({ slots }) => (
               <Fragment>
                 <div className="flex">
-                  {slots.slice(0, 3).map((slot, idx) => (
+                  {slots.slice(0, 4).map((slot, idx) => (
                     <Slot key={idx} {...slot} />
                   ))}
                 </div>
@@ -101,7 +93,7 @@ export function VerifyAuthenticationCode() {
                 <FakeDash />
 
                 <div className="flex">
-                  {slots.slice(3).map((slot, idx) => (
+                  {slots.slice(4).map((slot, idx) => (
                     <Slot key={idx} {...slot} />
                   ))}
                 </div>

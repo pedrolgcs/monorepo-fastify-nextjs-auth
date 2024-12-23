@@ -1,14 +1,13 @@
 import { Prisma } from '@prisma/client'
 import { z } from 'zod'
 
+import { MaxRetriesWhenGenerateOPTCodeError } from '@/http/_errors/max-retries-when-generate-opt-code'
 import dayjs from '@/lib/day-js'
 import { prisma } from '@/lib/prisma'
 import { resendMailClient } from '@/providers/mail/resend'
 import { FastifyTypedInstance } from '@/types/fastify'
 import { generateOPTCode } from '@/utils/generate-opt-code'
 import { retryUntilSuccess } from '@/utils/retry-until-success'
-
-import { MaxRetriesWhenGenerateOPTCodeError } from '../_errors/max-retries-when-generate-opt-code'
 
 const MAX_RETRIES_WHEN_GENERATE_OPT_CODE = 3
 

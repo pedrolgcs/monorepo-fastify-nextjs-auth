@@ -5,7 +5,7 @@ export * from 'input-otp'
 
 export function FakeCaret() {
   return (
-    <div className="animate-caret-blink pointer-events-none absolute inset-0 flex items-center justify-center">
+    <div className="pointer-events-none absolute inset-0 flex animate-caret-blink items-center justify-center">
       <div className="h-9 w-px bg-white" />
     </div>
   )
@@ -33,7 +33,7 @@ export function Slot(props: SlotProps) {
       )}
     >
       <div className="group-has-[input[data-input-otp-placeholder-shown]]:opacity-20">
-        {props.char ?? props.placeholderChar}
+        {props.char?.toUpperCase() ?? props.placeholderChar}
       </div>
       {props.hasFakeCaret && <FakeCaret />}
     </div>

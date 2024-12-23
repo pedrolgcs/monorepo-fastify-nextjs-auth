@@ -1,9 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod'
 
-import { BadRequestError } from './routes/_errors/bad-request-error'
-import { MaxRetriesWhenGenerateOPTCodeError } from './routes/_errors/max-retries-when-generate-opt-code'
-import { UnauthorizedError } from './routes/_errors/unauthorized-error'
+import { BadRequestError } from './_errors/bad-request-error'
+import { MaxRetriesWhenGenerateOPTCodeError } from './_errors/max-retries-when-generate-opt-code'
+import { UnauthorizedError } from './_errors/unauthorized-error'
 
 type FastifyErrorhandler = FastifyInstance['errorHandler']
 
@@ -40,7 +40,7 @@ export const errorhandler: FastifyErrorhandler = (error, request, reply) => {
     })
   }
 
-  // console.log(error)
+  console.log(error)
   // send error to some observability platform
 
   return reply.status(500).send({
