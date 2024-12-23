@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import dayjs from '@/lib/day-js'
 import { prisma } from '@/lib/prisma'
+import { resendMailClient } from '@/providers/mail/resend'
 import { FastifyTypedInstance } from '@/types/fastify'
 import { generateOPTCode } from '@/utils/generate-opt-code'
 import { retryUntilSuccess } from '@/utils/retry-until-success'
@@ -32,7 +33,7 @@ export async function authenticateWithPassword(app: FastifyTypedInstance) {
 
       try {
         await retryUntilSuccess<void>(async () => {
-          await prisma.oPTCode.create({
+          const { code } = await prisma.oPTCode.create({
             data: {
               email,
               code: generateOPTCode(),
@@ -40,11 +41,23 @@ export async function authenticateWithPassword(app: FastifyTypedInstance) {
               ipAddress: request.ip,
             },
           })
+
+          resendMailClient.sendEmail({
+            to: {
+              name: 'Resend',
+              email: ['delivered@resend.dev'],
+            },
+            subject: 'OPT Code',
+            template: {
+              file: 'send-opt-code',
+              variables: {
+                code,
+              },
+            },
+          })
         }, 3)
       } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          console.log(error.code)
-
           if (error.code === 'P2002') {
             throw new MaxRetriesWhenGenerateOPTCodeError()
           }

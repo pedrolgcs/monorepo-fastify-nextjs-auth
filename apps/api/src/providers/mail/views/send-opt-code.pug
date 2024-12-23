@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    title Next SaaS - Organization Invite
+
+  body
+    div(style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4;')
+      h1(style='color: #6a0dad; text-align: center;') 🔑 Next SaaS
+      p(style='color: #333; font-size: 18px;') Olá #{name},
+      p(style='color: #333; font-size: 16px;') Você foi convidado para ingressar na organização 
+        span(style='color: #6a0dad; font-weight: bold;') #{organization}.
+        |  Sua atribuição será 
+        span(style='color: #6a0dad; font-weight: bold;') #{role}.
+        |  Clique no link abaixo para aceitar:
+      div(style='text-align: center; margin: 20px 0;')
+        a(href=link, style='color: #f5821f; text-decoration: none; padding: 10px 20px;') 
+          | Aceitar convite
+      p(style='color: #555; font-size: 14px;') Caso não tenha conhecimento do remetente, ignore este e-mail.
+      p(style='color: #333; font-size: 16px;') Obrigado,
+      p(style='color: #6a0dad; font-weight: bold;') Equipe Next SaaS
