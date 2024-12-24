@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
-import { Sidebar } from '@/components/sidebar'
-import { cn } from '@/lib/utils'
 import { isAuthenticated } from '@/modules/authentication'
 
 export const metadata: Metadata = {
@@ -11,8 +9,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  sheet,
 }: Readonly<{
   children: React.ReactNode
+  sheet: React.ReactNode
 }>) {
   const userIsAuthenticated = await isAuthenticated()
 
@@ -21,11 +21,9 @@ export default async function RootLayout({
   }
 
   return (
-    <main>
-      <div className={cn('min-h-screen', 'lg:grid-cols-app lg:grid')}>
-        <Sidebar />
-        <div className={cn('p-4', 'lg:col-start-2 lg:p-8')}>{children}</div>
-      </div>
-    </main>
+    <>
+      <main>{children}</main>
+      {sheet}
+    </>
   )
 }
