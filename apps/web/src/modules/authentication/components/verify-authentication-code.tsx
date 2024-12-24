@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Fragment, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -17,6 +18,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useVerifyOptCodeMutation } from '@/http/hooks/use-verify-opt-code-mutation'
+import { setCookie } from '@/lib/cookies'
 
 const authenticateFormSchema = z.object({
   code: z.string(),
@@ -26,6 +28,8 @@ type AuthenticateForm = z.infer<typeof authenticateFormSchema>
 
 export function VerifyAuthenticationCode() {
   const formRef = useRef<HTMLFormElement>(null)
+
+  const router = useRouter()
 
   const { mutateAsync: verifyAuthenticationCode } = useVerifyOptCodeMutation()
 
@@ -37,12 +41,18 @@ export function VerifyAuthenticationCode() {
     const { code } = data
 
     toast.promise(
-      verifyAuthenticationCode({
-        code,
-      }),
+      verifyAuthenticationCode(
+        { code },
+        {
+          onSuccess: (response) => {
+            setCookie('token', response.token)
+            router.push('/')
+          },
+        },
+      ),
       {
         loading: 'Verifying authentication code...',
-        error: (error) => error?.message || 'Something went wrong',
+        error: (error) => error?.message,
       },
     )
   }

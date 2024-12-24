@@ -1,4 +1,6 @@
-import ky from 'ky'
+import ky, { type HTTPError } from 'ky'
+
+import { refreshAccessToken } from './requests/refresh-access-token'
 
 export const api = ky.create({
   prefixUrl: 'http://localhost:3333',
@@ -10,16 +12,18 @@ export const api = ky.create({
       },
     ],
     afterResponse: [
-      async (request, options, response) => {
-        if (response.status === 403) {
-          const token = await ky('https://example.com/token').text()
+      async (request, _, response) => {
+        if (response.status === 401) {
+          const { token } = await refreshAccessToken()
           request.headers.set('Authorization', `Bearer ${token}`)
           return ky(request)
         }
+
+        return response
       },
     ],
     beforeError: [
-      async (error) => {
+      async (error): Promise<HTTPError<{ message: string }>> => {
         const { response } = error
         const contentType = response.headers.get('content-type')
 

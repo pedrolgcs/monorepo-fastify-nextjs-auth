@@ -4,7 +4,9 @@ export type VerifyAuthenticationCodeRequest = {
   code: string
 }
 
-export type VerifyAuthenticationCodeResponse = void
+export type VerifyAuthenticationCodeResponse = {
+  token: string
+}
 
 export async function verifyAuthenticationCode(
   params: VerifyAuthenticationCodeRequest,
