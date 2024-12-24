@@ -166,6 +166,36 @@
           }
         }
       }
+    },
+    "/organizations": {
+      "get": {
+        "operationId": "organization",
+        "summary": "List organizations",
+        "tags": [
+          "Organization"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

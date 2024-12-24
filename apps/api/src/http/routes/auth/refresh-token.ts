@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { FastifyTypedInstance } from '@/types/fastify'
 
 export async function refreshToken(app: FastifyTypedInstance) {
@@ -18,13 +19,23 @@ export async function refreshToken(app: FastifyTypedInstance) {
       },
     },
     async (request, reply) => {
-      await request.jwtVerify({ onlyCookie: true })
+      const currentRefreshToken = request.cookies.refreshToken
 
-      const { sub: userId } = request.user
+      if (!currentRefreshToken) throw new UnauthorizedError()
+
+      let userId = ''
+
+      try {
+        const { sub } = app.jwt.verify<{ sub: string }>(currentRefreshToken)
+        userId = sub
+      } catch {
+        throw new UnauthorizedError()
+      }
 
       const token = await reply.jwtSign({
         sign: {
           sub: userId,
+          expiresIn: '15m',
         },
       })
 

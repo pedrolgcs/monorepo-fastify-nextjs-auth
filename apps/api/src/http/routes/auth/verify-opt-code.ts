@@ -67,6 +67,7 @@ export async function verifyOPTCode(app: FastifyTypedInstance) {
         {
           sign: {
             sub: userId,
+            expiresIn: '15m',
           },
         },
       )

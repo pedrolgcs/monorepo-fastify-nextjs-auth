@@ -28,14 +28,7 @@ app.register(fastifyCors, {
 
 // JWT
 app.register(fastifyJWT, {
-  secret: '0193ea55-540d-7449-af3c-172e9a8e39cf',
-  cookie: {
-    cookieName: 'refreshToken',
-    signed: false,
-  },
-  sign: {
-    expiresIn: '10m',
-  },
+  secret: 'my-secret',
 })
 
 // Cookies
