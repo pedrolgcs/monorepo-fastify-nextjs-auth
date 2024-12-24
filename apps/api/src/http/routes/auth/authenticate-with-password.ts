@@ -38,7 +38,7 @@ export async function authenticateWithPassword(app: FastifyTypedInstance) {
             data: {
               email,
               code: generateOPTCode(),
-              expiresAt: dayjs().add(1, 'hour').toDate(),
+              expiresAt: dayjs().add(1, 'day').toDate(),
               ipAddress: request.ip,
             },
           })
