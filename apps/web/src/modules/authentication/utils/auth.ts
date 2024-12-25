@@ -3,5 +3,7 @@ import { getCookie } from '@/lib/cookies'
 
 export async function isAuthenticated() {
   const token = await getCookie(KEYS.TOKEN)
-  return Boolean(token)
+  const refreshToken = await getCookie(KEYS.REFRESH_TOKEN)
+
+  return Boolean(refreshToken || token)
 }

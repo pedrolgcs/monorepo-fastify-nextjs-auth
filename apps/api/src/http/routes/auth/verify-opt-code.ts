@@ -1,3 +1,5 @@
+import crypto from 'node:crypto'
+
 import { z } from 'zod'
 
 import { BadRequestError } from '@/http/_errors/bad-request-error'
@@ -35,13 +37,17 @@ export async function verifyOPTCode(app: FastifyTypedInstance) {
       })
 
       if (!optCode) {
-        throw new BadRequestError('code not found.')
+        throw new BadRequestError('invalid credentials.')
+      }
+
+      if (optCode.usedAt) {
+        throw new BadRequestError('code has been used.')
       }
 
       const now = dayjs()
 
       if (now.isAfter(optCode.expiresAt)) {
-        throw new BadRequestError('code expired.')
+        throw new BadRequestError('code has been expired.')
       }
 
       const user = await prisma.user.findUnique({
@@ -50,37 +56,53 @@ export async function verifyOPTCode(app: FastifyTypedInstance) {
         },
       })
 
-      let userId = user?.id || ''
-
       if (!user) {
-        const newUser = await prisma.user.create({
-          data: {
-            email: optCode.email,
-          },
-        })
-
-        userId = newUser.id
+        throw new BadRequestError('invalid credentials.')
       }
 
-      const token = await reply.jwtSign(
-        {},
-        {
-          sign: {
-            sub: userId,
-            expiresIn: '15m',
-          },
+      await prisma.optCode.update({
+        where: {
+          code,
         },
-      )
+        data: {
+          usedAt: now.toDate(),
+        },
+      })
 
-      const refreshToken = await reply.jwtSign(
-        {},
-        {
-          sign: {
-            sub: userId,
-            expiresIn: '7d',
+      const refreshTokenId = crypto.randomUUID()
+
+      const [token, refreshToken] = await Promise.all([
+        reply.jwtSign(
+          {},
+          {
+            sign: {
+              sub: user.id,
+              expiresIn: '15m',
+            },
           },
+        ),
+
+        reply.jwtSign(
+          {},
+          {
+            sign: {
+              sub: refreshTokenId,
+              expiresIn: '7d',
+            },
+          },
+        ),
+      ])
+
+      await prisma.refreshToken.create({
+        data: {
+          id: refreshTokenId,
+          token: refreshToken,
+          expiresAt: dayjs().add(7, 'day').toDate(),
+          ipAddress: request.ip,
+          userId: user.id,
+          device: request.headers['user-agent'],
         },
-      )
+      })
 
       return reply
         .status(200)

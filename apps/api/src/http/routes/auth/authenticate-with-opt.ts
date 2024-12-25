@@ -15,9 +15,9 @@ const bodySchema = z.object({
   email: z.string().email(),
 })
 
-export async function authenticateWithPassword(app: FastifyTypedInstance) {
+export async function authenticateWithOpt(app: FastifyTypedInstance) {
   app.post(
-    '/sessions/password',
+    '/sessions/opt',
     {
       schema: {
         operationId: 'authenticateWithPassword',
@@ -31,6 +31,16 @@ export async function authenticateWithPassword(app: FastifyTypedInstance) {
     },
     async (request, reply) => {
       const { email } = request.body
+
+      await prisma.user.upsert({
+        where: {
+          email,
+        },
+        update: {},
+        create: {
+          email,
+        },
+      })
 
       try {
         await retryUntilSuccess<void>(async () => {

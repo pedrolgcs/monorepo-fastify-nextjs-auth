@@ -47,7 +47,7 @@
         }
       }
     },
-    "/sessions/password": {
+    "/sessions/opt": {
       "post": {
         "operationId": "authenticateWithPassword",
         "summary": "Authenticate with e-mail and password",
@@ -167,12 +167,17 @@
         }
       }
     },
-    "/organizations": {
+    "/me": {
       "get": {
-        "operationId": "organization",
-        "summary": "List organizations",
+        "operationId": "getProfile",
+        "summary": "Get profile",
         "tags": [
-          "Organization"
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
           "200": {
@@ -182,14 +187,83 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
+                    "id": {
                       "type": "string"
+                    },
+                    "name": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "profession": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
-                    "status"
+                    "id",
+                    "name",
+                    "email",
+                    "profession"
                   ],
                   "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "put": {
+        "operationId": "updateProfile",
+        "summary": "Update profile",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "profession": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "not": {}
                 }
               }
             }

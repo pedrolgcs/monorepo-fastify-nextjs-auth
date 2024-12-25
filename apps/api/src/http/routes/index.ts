@@ -1,20 +1,22 @@
 import { FastifyTypedInstance } from '@/types/fastify'
 
-import { authenticateWithPassword } from './auth/authenticate-with-password'
+import { authenticateWithOpt } from './auth/authenticate-with-opt'
 import { refreshToken } from './auth/refresh-token'
 import { verifyOPTCode } from './auth/verify-opt-code'
 import { healthCheck } from './health-check'
-import { organization } from './organizations'
+import { getUserProfile } from './user/get-user-profile'
+import { updateUserProfile } from './user/update-user-profile'
 
 export async function routes(app: FastifyTypedInstance) {
   // app
   healthCheck(app)
 
   // auth
-  authenticateWithPassword(app)
+  authenticateWithOpt(app)
   verifyOPTCode(app)
   refreshToken(app)
 
-  // organization
-  organization(app)
+  // user
+  getUserProfile(app)
+  updateUserProfile(app)
 }

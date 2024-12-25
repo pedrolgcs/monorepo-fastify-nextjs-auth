@@ -5,7 +5,9 @@ export type RefreshTokenResponse = {
 }
 
 export async function refreshAccessToken() {
-  const result = await api.post('sessions/refresh').json<RefreshTokenResponse>()
+  const result = await api
+    .patch('sessions/refresh')
+    .json<RefreshTokenResponse>()
 
   return result
 }

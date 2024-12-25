@@ -3,20 +3,11 @@ import {
   ChevronsRightIcon,
   CopyIcon,
   EllipsisVerticalIcon,
-  LogOutIcon,
-  PencilIcon,
   Trash2Icon,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +26,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { LogOut } from '@/modules/authentication'
+import { EditUserProfile, UserDetails } from '@/modules/user'
 
 const MOCK_RESPONSE = [
   {
@@ -91,20 +84,12 @@ export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
       <Card className="w-full max-w-3xl rounded-xl">
-        <CardHeader className="flex-row justify-between">
-          <div className="space-y-1">
-            <CardTitle>Pedro Henrique</CardTitle>
-            <CardDescription>Software Engineer</CardDescription>
-          </div>
+        <CardHeader className="flex-row justify-between gap-4">
+          <UserDetails />
 
-          <div className="space-x-2">
-            <Button variant="outline" size="sm">
-              <PencilIcon className="size-3" /> Editar Perfil
-            </Button>
-
-            <Button variant="destructive" size="sm">
-              <LogOutIcon className="size-3" /> Logout
-            </Button>
+          <div className="flex items-center gap-3">
+            <EditUserProfile />
+            <LogOut />
           </div>
         </CardHeader>
 
@@ -173,7 +158,7 @@ export default function Home() {
             list of all your authentication tokens
           </p>
 
-          <div className="space-x-2">
+          <div className="flex flex-row items-center gap-2">
             <Button variant="ghost" size="icon">
               <ChevronsLeftIcon />
             </Button>
