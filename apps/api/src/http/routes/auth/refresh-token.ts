@@ -25,8 +25,6 @@ export async function refreshToken(app: FastifyTypedInstance) {
     async (request, reply) => {
       const currentRefreshToken = request.cookies.refreshToken
 
-      throw new UnauthorizedError()
-
       if (!currentRefreshToken) throw new UnauthorizedError()
 
       let refreshTokenId = ''
