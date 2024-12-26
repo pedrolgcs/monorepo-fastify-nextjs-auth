@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { getProfile } from '@/http/requests/get-profile'
 import { LogOut } from '@/modules/authentication'
 import { EditUserProfile, UserDetails } from '@/modules/user'
 
@@ -80,7 +81,14 @@ const MOCK_RESPONSE = [
   },
 ]
 
-export default function Home() {
+export default async function Home() {
+  try {
+    const user = await getProfile()
+    console.log(user)
+  } catch (error) {
+    console.log(error)
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
       <Card className="w-full max-w-3xl rounded-xl">

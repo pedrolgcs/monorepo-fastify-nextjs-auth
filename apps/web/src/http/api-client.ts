@@ -1,8 +1,9 @@
+import { setCookie } from 'cookies-next'
 import ky, { type HTTPError } from 'ky'
 
 import { API_BASE_URL } from '@/constants/api'
 import { KEYS } from '@/constants/cookies-key'
-import { deleteCookie, getCookie, getCookies, setCookie } from '@/lib/cookies'
+import { deleteCookie, getCookie, getCookies } from '@/lib/cookies'
 
 export type RefreshTokenResponse = {
   token: string
@@ -15,7 +16,7 @@ export const api = ky.create({
   hooks: {
     beforeRequest: [
       async (request) => {
-        const token = await getCookie('token')
+        const token = await getCookie(KEYS.TOKEN)
 
         if (token) {
           request.headers.set('Authorization', `Bearer ${token}`)
@@ -28,7 +29,7 @@ export const api = ky.create({
             .map(([key, value]) => {
               return `${key}=${value}`
             })
-            .join('; ')
+            .join(';')
 
           request.headers.set('Cookie', applicationCookies)
         }
@@ -48,15 +49,15 @@ export const api = ky.create({
             request.headers.set('Authorization', `Bearer ${token}`)
 
             return ky(request)
-          } catch {
-            deleteCookie(KEYS.TOKEN)
-
+          } catch (error) {
             await ky
               .create({ credentials: 'include', headers: request.headers })
               .get(`${API_BASE_URL}/sessions/logout`)
 
+            deleteCookie(KEYS.TOKEN)
+
             if (typeof window !== 'undefined') {
-              window.location.assign('/about')
+              window.location.assign('/auth/sign-in')
             }
 
             return response
