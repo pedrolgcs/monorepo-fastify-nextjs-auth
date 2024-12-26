@@ -1,35 +1,66 @@
 import ky, { type HTTPError } from 'ky'
 
+import { API_BASE_URL } from '@/constants/api'
 import { KEYS } from '@/constants/cookies-key'
-import { getCookie, setCookie } from '@/lib/cookies'
+import { deleteCookie, getCookie, getCookies, setCookie } from '@/lib/cookies'
 
-import { refreshAccessToken } from './requests/refresh-access-token'
+export type RefreshTokenResponse = {
+  token: string
+}
 
 export const api = ky.create({
-  prefixUrl: 'http://localhost:3333',
+  prefixUrl: API_BASE_URL,
   credentials: 'include',
+  retry: 0,
   hooks: {
     beforeRequest: [
       async (request) => {
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
-        const token = await getCookie(KEYS.TOKEN)
+        const token = await getCookie('token')
 
         if (token) {
           request.headers.set('Authorization', `Bearer ${token}`)
+        }
+
+        const cookies = await getCookies()
+
+        if (cookies) {
+          const applicationCookies = Object.entries(cookies)
+            .map(([key, value]) => {
+              return `${key}=${value}`
+            })
+            .join('; ')
+
+          request.headers.set('Cookie', applicationCookies)
         }
       },
     ],
     afterResponse: [
       async (request, _, response) => {
         if (response.status === 401) {
-          const { token } = await refreshAccessToken()
+          try {
+            const { token } = await ky
+              .create({ credentials: 'include', headers: request.headers })
+              .patch(`${API_BASE_URL}/sessions/refresh`)
+              .json<RefreshTokenResponse>()
 
-          await setCookie(KEYS.TOKEN, token)
+            await setCookie(KEYS.TOKEN, token)
 
-          request.headers.set('Authorization', `Bearer ${token}`)
+            request.headers.set('Authorization', `Bearer ${token}`)
 
-          return ky(request)
+            return ky(request)
+          } catch {
+            deleteCookie(KEYS.TOKEN)
+
+            await ky
+              .create({ credentials: 'include', headers: request.headers })
+              .get(`${API_BASE_URL}/sessions/logout`)
+
+            if (typeof window !== 'undefined') {
+              window.location.assign('/about')
+            }
+
+            return response
+          }
         }
 
         return response

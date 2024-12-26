@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
-import { signInWithOpt } from '@/http/requests/sign-in-with-opt'
+import { signInWithEmail } from '@/http/requests/sign-in-with-email'
 import { actionClient } from '@/lib/safe-action'
 
 const schema = z.object({
@@ -18,7 +18,7 @@ export const signInAction = actionClient.schema(schema).action(
       parsedInput: { email },
     } = data
 
-    await signInWithOpt({ email })
+    await signInWithEmail({ email })
   },
   {
     onSuccess: () => {
