@@ -15,14 +15,14 @@ const bodySchema = z.object({
   email: z.string().email(),
 })
 
-export async function authenticateWithOpt(app: FastifyTypedInstance) {
+export async function authenticateWithEmail(app: FastifyTypedInstance) {
   app.post(
-    '/sessions/opt',
+    '/sessions/email',
     {
       schema: {
-        operationId: 'authenticateWithPassword',
+        operationId: 'authenticateWithEmail',
         tags: ['Auth'],
-        summary: 'Authenticate with e-mail and password',
+        summary: 'Authenticate with e-mail',
         body: bodySchema,
         response: {
           200: z.never(),
@@ -53,18 +53,20 @@ export async function authenticateWithOpt(app: FastifyTypedInstance) {
             },
           })
 
-          resendMailClient.sendEmail({
-            to: {
-              email: ['delivered@resend.dev'],
-            },
-            subject: 'OPT Code',
-            template: {
-              file: 'send-opt-code',
-              variables: {
-                code,
+          if (process.env.NODE_ENV === 'production') {
+            resendMailClient.sendEmail({
+              to: {
+                email: ['delivered@resend.dev'],
               },
-            },
-          })
+              subject: 'OPT Code',
+              template: {
+                file: 'send-opt-code',
+                variables: {
+                  code,
+                },
+              },
+            })
+          }
         }, MAX_RETRIES_WHEN_GENERATE_OPT_CODE)
       } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

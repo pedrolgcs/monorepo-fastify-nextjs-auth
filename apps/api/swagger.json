@@ -47,10 +47,10 @@
         }
       }
     },
-    "/sessions/opt": {
+    "/sessions/email": {
       "post": {
-        "operationId": "authenticateWithPassword",
-        "summary": "Authenticate with e-mail and password",
+        "operationId": "authenticateWithEmail",
+        "summary": "Authenticate with e-mail",
         "tags": [
           "Auth"
         ],
@@ -160,6 +160,88 @@
                     "token"
                   ],
                   "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/tokens": {
+      "get": {
+        "operationId": "getTokensByUser",
+        "summary": "List tokens by user",
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "token": {
+                        "type": "string"
+                      },
+                      "revoked": {
+                        "type": "boolean"
+                      },
+                      "device": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "ipAddress": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "token",
+                      "revoked",
+                      "device",
+                      "ipAddress",
+                      "createdAt"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/logout": {
+      "get": {
+        "operationId": "logout",
+        "summary": "Logout",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "not": {}
                 }
               }
             }

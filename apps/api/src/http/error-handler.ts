@@ -40,7 +40,7 @@ export const errorhandler: FastifyErrorhandler = (error, request, reply) => {
     })
   }
 
-  console.log(error)
+  // console.log(error)
   // send error to some observability platform
 
   return reply.status(500).send({

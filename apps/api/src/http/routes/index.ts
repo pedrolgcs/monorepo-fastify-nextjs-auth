@@ -1,6 +1,8 @@
 import { FastifyTypedInstance } from '@/types/fastify'
 
-import { authenticateWithOpt } from './auth/authenticate-with-opt'
+import { authenticateWithEmail } from './auth/authenticate-with-email'
+import { getTokensByUser } from './auth/get-tokens-by-user'
+import { logout } from './auth/logout'
 import { refreshToken } from './auth/refresh-token'
 import { verifyOPTCode } from './auth/verify-opt-code'
 import { healthCheck } from './health-check'
@@ -12,9 +14,11 @@ export async function routes(app: FastifyTypedInstance) {
   healthCheck(app)
 
   // auth
-  authenticateWithOpt(app)
+  authenticateWithEmail(app)
   verifyOPTCode(app)
   refreshToken(app)
+  getTokensByUser(app)
+  logout(app)
 
   // user
   getUserProfile(app)
