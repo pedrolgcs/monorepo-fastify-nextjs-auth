@@ -96,7 +96,7 @@ export async function refreshToken(app: FastifyTypedInstance) {
         {
           sign: {
             sub: user.id,
-            expiresIn: '10s',
+            expiresIn: '15m',
           },
         },
       )
