@@ -26,8 +26,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getProfile } from '@/http/requests/get-profile'
-import { getTokensByAuthenticatedUser } from '@/http/requests/get-tokens-by-authenticated-user'
 import { LogOut } from '@/modules/authentication'
 import { EditUserProfile, UserDetails } from '@/modules/user'
 
@@ -83,15 +81,6 @@ const MOCK_RESPONSE = [
 ]
 
 export default async function Home() {
-  try {
-    const user = await getProfile()
-    const tokens = await getTokensByAuthenticatedUser()
-    console.log(user)
-    console.log(tokens)
-  } catch {
-    console.log('deu ruim')
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
       <Card className="w-full max-w-3xl rounded-xl">

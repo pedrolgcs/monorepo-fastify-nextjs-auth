@@ -8,7 +8,6 @@ export type RefreshTokenResponse = {
   token: string
 }
 
-// auxiliar variables
 let isRefreshing = false
 let refreshTokenPromise: Promise<void> | null = null
 
@@ -67,7 +66,6 @@ export const api = ky.create({
     afterResponse: [
       async (request, _, response) => {
         if (response.status === 401) {
-          // await if there is a refresh token request in progress.
           if (isRefreshing) {
             if (refreshTokenPromise) {
               await refreshTokenPromise
@@ -83,9 +81,7 @@ export const api = ky.create({
             return response
           }
 
-          // set isRefreshing to true and start the refresh token request.
           isRefreshing = true
-
           refreshTokenPromise = refreshAccessToken()
 
           await refreshTokenPromise
@@ -109,9 +105,7 @@ export const api = ky.create({
         const contentType = response.headers.get('content-type')
 
         if (contentType?.indexOf('application/json') !== -1) {
-          const errorResponse = await response.json<{
-            message: string
-          }>()
+          const errorResponse = await response.json<{ message: string }>()
           error.message = errorResponse.message
         } else {
           const errorResponse = await response.text()

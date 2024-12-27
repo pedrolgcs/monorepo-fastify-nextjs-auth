@@ -1,7 +1,7 @@
 'use client'
+
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetProfile } from '@/http/hooks/use-get-profile'
-import { useGetTokensByAuthenticatedUser } from '@/http/hooks/use-get-tokens-by-authenticated-user'
 
 export function UserDetails() {
   const {
@@ -10,8 +10,6 @@ export function UserDetails() {
     isError: isErrorOnGetProfile,
     error: errorOnGetProfile,
   } = useGetProfile()
-
-  const { data } = useGetTokensByAuthenticatedUser()
 
   if (isLoadingOnGetProfile) {
     return (
