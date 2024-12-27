@@ -18,14 +18,7 @@ export const getCookie = async (key: string) => {
 }
 
 export const setCookie = async (key: string, value: string) => {
-  let cookiesStore: CookiesFn | undefined
-
-  if (typeof window === 'undefined') {
-    const { cookies: serverCookies } = await import('next/headers')
-    cookiesStore = serverCookies
-  }
-
-  return setCookieNext(key, value, { cookies: cookiesStore })
+  return setCookieNext(key, value)
 }
 
 export const deleteCookie = async (key: string) => {

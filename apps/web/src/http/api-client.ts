@@ -1,13 +1,15 @@
-import { setCookie } from 'cookies-next'
 import ky, { type HTTPError } from 'ky'
 
 import { API_BASE_URL } from '@/constants/api'
 import { KEYS } from '@/constants/cookies-key'
-import { deleteCookie, getCookie, getCookies } from '@/lib/cookies'
+import { deleteCookie, getCookie, getCookies, setCookie } from '@/lib/cookies'
 
 export type RefreshTokenResponse = {
   token: string
 }
+
+let isRefreshing = false
+let refreshTokenPromise: Promise<void> | null = null
 
 export const api = ky.create({
   prefixUrl: API_BASE_URL,
@@ -38,30 +40,59 @@ export const api = ky.create({
     afterResponse: [
       async (request, _, response) => {
         if (response.status === 401) {
-          try {
-            const { token } = await ky
-              .create({ credentials: 'include', headers: request.headers })
-              .patch(`${API_BASE_URL}/sessions/refresh`)
-              .json<RefreshTokenResponse>()
+          // await if there is a refresh token request in progress.
+          if (isRefreshing) {
+            if (refreshTokenPromise) {
+              await refreshTokenPromise
+            }
 
-            await setCookie(KEYS.TOKEN, token)
+            const token = await getCookie(KEYS.TOKEN)
 
-            request.headers.set('Authorization', `Bearer ${token}`)
-
-            return ky(request)
-          } catch (error) {
-            await ky
-              .create({ credentials: 'include', headers: request.headers })
-              .get(`${API_BASE_URL}/sessions/logout`)
-
-            deleteCookie(KEYS.TOKEN)
-
-            if (typeof window !== 'undefined') {
-              window.location.assign('/auth/sign-in')
+            if (token) {
+              request.headers.set('Authorization', `Bearer ${token}`)
+              return ky(request)
             }
 
             return response
           }
+
+          // set isRefreshing to true and start the refresh token request.
+          isRefreshing = true
+
+          refreshTokenPromise = (async () => {
+            try {
+              const { token } = await ky
+                .create({ credentials: 'include', headers: request.headers })
+                .patch(`${API_BASE_URL}/sessions/refresh`)
+                .json<RefreshTokenResponse>()
+
+              await setCookie(KEYS.TOKEN, token)
+            } catch (error) {
+              await ky
+                .create({ credentials: 'include', headers: request.headers })
+                .get(`${API_BASE_URL}/sessions/logout`)
+
+              deleteCookie(KEYS.TOKEN)
+
+              if (typeof window !== 'undefined') {
+                window.location.assign('/auth/sign-in')
+              }
+            } finally {
+              isRefreshing = false
+              refreshTokenPromise = null
+            }
+          })()
+
+          await refreshTokenPromise
+
+          const token = await getCookie(KEYS.TOKEN)
+
+          if (token) {
+            request.headers.set('Authorization', `Bearer ${token}`)
+            return ky(request)
+          }
+
+          return response
         }
 
         return response
