@@ -8,8 +8,35 @@ export type RefreshTokenResponse = {
   token: string
 }
 
+// auxiliar variables
 let isRefreshing = false
 let refreshTokenPromise: Promise<void> | null = null
+
+const refreshAccessToken = async () => {
+  try {
+    const { token } = await ky
+      .create({ credentials: 'include' })
+      .patch(`${API_BASE_URL}/sessions/refresh`)
+      .json<RefreshTokenResponse>()
+
+    await setCookie(KEYS.TOKEN, token)
+  } catch (error) {
+    await ky
+      .create({ credentials: 'include' })
+      .get(`${API_BASE_URL}/sessions/logout`)
+
+    deleteCookie(KEYS.TOKEN)
+
+    if (typeof window !== 'undefined') {
+      window.location.assign('/auth/sign-in')
+    }
+
+    throw error
+  } finally {
+    isRefreshing = false
+    refreshTokenPromise = null
+  }
+}
 
 export const api = ky.create({
   prefixUrl: API_BASE_URL,
@@ -59,29 +86,7 @@ export const api = ky.create({
           // set isRefreshing to true and start the refresh token request.
           isRefreshing = true
 
-          refreshTokenPromise = (async () => {
-            try {
-              const { token } = await ky
-                .create({ credentials: 'include', headers: request.headers })
-                .patch(`${API_BASE_URL}/sessions/refresh`)
-                .json<RefreshTokenResponse>()
-
-              await setCookie(KEYS.TOKEN, token)
-            } catch (error) {
-              await ky
-                .create({ credentials: 'include', headers: request.headers })
-                .get(`${API_BASE_URL}/sessions/logout`)
-
-              deleteCookie(KEYS.TOKEN)
-
-              if (typeof window !== 'undefined') {
-                window.location.assign('/auth/sign-in')
-              }
-            } finally {
-              isRefreshing = false
-              refreshTokenPromise = null
-            }
-          })()
+          refreshTokenPromise = refreshAccessToken()
 
           await refreshTokenPromise
 
