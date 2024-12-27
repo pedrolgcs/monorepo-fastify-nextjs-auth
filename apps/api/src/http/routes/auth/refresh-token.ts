@@ -6,6 +6,7 @@ import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import dayjs from '@/lib/day-js'
 import { prisma } from '@/lib/prisma'
 import { FastifyTypedInstance } from '@/types/fastify'
+import { getBrowserDevice } from '@/utils/browser-device'
 
 export async function refreshToken(app: FastifyTypedInstance) {
   app.patch(
@@ -85,7 +86,7 @@ export async function refreshToken(app: FastifyTypedInstance) {
             token: refreshTokenToBeSent,
             userId: user.id,
             expiresAt: dayjs().add(7, 'day').toDate(),
-            device: request.headers['user-agent'],
+            device: getBrowserDevice(request.headers['user-agent']).name,
             ipAddress: request.ip,
           },
         })

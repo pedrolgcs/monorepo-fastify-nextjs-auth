@@ -3,12 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircleIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useGetProfile } from '@/http/hooks/use-get-profile'
+import { useGetUserProfile } from '@/http/hooks/use-get-user-profile'
 import { useUpdateUserProfileMutation } from '@/http/hooks/use-update-user-profile-mutation'
 
 const formSchema = z.object({
@@ -19,7 +20,7 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>
 
 export function EditUserProfileForm() {
-  const { data: userProfile } = useGetProfile()
+  const { data: userProfile } = useGetUserProfile()
 
   const { mutate: updateUserProfile, isPending: isPendingOnUpdateUserProfile } =
     useUpdateUserProfileMutation()
@@ -37,11 +38,21 @@ export function EditUserProfileForm() {
 
     if (!userProfile) return
 
-    updateUserProfile({
-      id: userProfile.id,
-      name,
-      profession,
-    })
+    updateUserProfile(
+      {
+        id: userProfile.id,
+        name,
+        profession,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Profile updated successfully')
+        },
+        onError: (error) => {
+          toast.error(error.message)
+        },
+      },
+    )
   }
 
   return (

@@ -6,6 +6,7 @@ import { BadRequestError } from '@/http/_errors/bad-request-error'
 import dayjs from '@/lib/day-js'
 import { prisma } from '@/lib/prisma'
 import { FastifyTypedInstance } from '@/types/fastify'
+import { getBrowserDevice } from '@/utils/browser-device'
 
 const bodySchema = z.object({
   code: z.string(),
@@ -100,7 +101,7 @@ export async function verifyOPTCode(app: FastifyTypedInstance) {
           expiresAt: dayjs().add(7, 'day').toDate(),
           ipAddress: request.ip,
           userId: user.id,
-          device: request.headers['user-agent'],
+          device: getBrowserDevice(request.headers['user-agent']).name,
         },
       })
 

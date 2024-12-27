@@ -1,7 +1,7 @@
 'use client'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetProfile } from '@/http/hooks/use-get-profile'
+import { useGetUserProfile } from '@/http/hooks/use-get-user-profile'
 
 export function UserDetails() {
   const {
@@ -9,7 +9,7 @@ export function UserDetails() {
     isLoading: isLoadingOnGetProfile,
     isError: isErrorOnGetProfile,
     error: errorOnGetProfile,
-  } = useGetProfile()
+  } = useGetUserProfile()
 
   if (isLoadingOnGetProfile) {
     return (
@@ -28,13 +28,21 @@ export function UserDetails() {
     )
   }
 
+  if (!profile) {
+    return (
+      <p className="text-sm font-semibold leading-none tracking-tight text-muted-foreground">
+        No profile found
+      </p>
+    )
+  }
+
   return (
     <div className="space-y-1">
       <p className="text-2xl font-semibold leading-none tracking-tight">
-        {profile?.name || '-'}
+        {profile.name || profile.email}
       </p>
       <span className="block text-sm text-muted-foreground">
-        Software Engineer
+        {profile.profession}
       </span>
     </div>
   )
