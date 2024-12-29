@@ -1,6 +1,6 @@
 'use client'
 
-import { LogOutIcon } from 'lucide-react'
+import { LoaderCircleIcon, LogOutIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -20,7 +20,7 @@ import { deleteCookie } from '@/lib/cookies'
 
 export function LogOut() {
   const router = useRouter()
-  const { mutate: logout } = useLogoutMutation()
+  const { mutate: logout, isPending: isPendingOnLogout } = useLogoutMutation()
 
   const handleLogout = () => {
     logout(undefined, {
@@ -29,6 +29,14 @@ export function LogOut() {
         router.push('/auth/sign-in')
       },
     })
+  }
+
+  if (isPendingOnLogout) {
+    return (
+      <Button variant="destructive" size="sm" disabled>
+        <LoaderCircleIcon className="spin size-3 animate-spin" />
+      </Button>
+    )
   }
 
   return (
