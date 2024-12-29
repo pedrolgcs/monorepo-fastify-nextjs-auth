@@ -209,6 +209,29 @@
                       "createdAt": {
                         "type": "string",
                         "format": "date-time"
+                      },
+                      "expiresAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "isExpired": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "active"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "disabled"
+                            ]
+                          }
+                        ]
                       }
                     },
                     "required": [
@@ -217,7 +240,10 @@
                       "revoked",
                       "device",
                       "ipAddress",
-                      "createdAt"
+                      "createdAt",
+                      "expiresAt",
+                      "isExpired",
+                      "status"
                     ],
                     "additionalProperties": false
                   }

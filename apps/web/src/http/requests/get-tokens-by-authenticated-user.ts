@@ -8,7 +8,9 @@ export type GetTokensByAuthenticatedUserResponse = Array<{
   ipAddress: string | null
   createdAt: string
   expiresAt: string
+  isExpired: boolean
   userId: string
+  status: 'active' | 'disabled'
 }>
 
 export async function getTokensByAuthenticatedUser() {

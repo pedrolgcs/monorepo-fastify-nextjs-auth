@@ -1,84 +1,9 @@
-import {
-  ChevronsLeftIcon,
-  ChevronsRightIcon,
-  CopyIcon,
-  EllipsisVerticalIcon,
-  Trash2Icon,
-} from 'lucide-react'
+import { ChevronsLeftIcon, ChevronsRightIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { LogOut } from '@/modules/authentication'
-import { EditUserProfile, UserDetails } from '@/modules/user'
-
-const MOCK_RESPONSE = [
-  {
-    id: '1',
-    provider: 'Safari',
-    status: 'active',
-    created_at: '2023-05-26T12:00:00.000Z',
-    expires_at: '2023-05-26T12:00:00.000Z',
-    token: '1234567890',
-  },
-  {
-    id: '2',
-    provider: 'Chrome',
-    status: 'revoked',
-    created_at: '2023-05-26T12:00:00.000Z',
-    expires_at: '2023-05-26T12:00:00.000Z',
-    token: '1234567890',
-  },
-  {
-    id: '3',
-    provider: 'Chrome',
-    status: 'active',
-    created_at: '2023-05-26T12:00:00.000Z',
-    expires_at: '2023-05-26T12:00:00.000Z',
-    token: '1234567890',
-  },
-  {
-    id: '4',
-    provider: 'Firefox',
-    status: 'revoked',
-    created_at: '2023-05-26T12:00:00.000Z',
-    expires_at: '2023-05-26T12:00:00.000Z',
-    token: '1234567890',
-  },
-  {
-    id: '5',
-    provider: 'Firefox',
-    status: 'revoked',
-    created_at: '2023-05-26T12:00:00.000Z',
-    expires_at: '2023-05-26T12:00:00.000Z',
-    token: '1234567890',
-  },
-  {
-    id: '6',
-    provider: 'Firefox',
-    status: 'revoked',
-    created_at: '2023-05-26T12:00:00.000Z',
-    expires_at: '2023-05-26T12:00:00.000Z',
-    token: '1234567890',
-  },
-]
+import { EditUserProfile, UserDetails, UserTokens } from '@/modules/user'
 
 export default async function Home() {
   return (
@@ -94,63 +19,7 @@ export default async function Home() {
         </CardHeader>
 
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Status</TableHead>
-                <TableHead>Provider</TableHead>
-                <TableHead>Created at</TableHead>
-                <TableHead>Expires at</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {MOCK_RESPONSE.map((response) => (
-                <TableRow key={response.id}>
-                  <TableCell>
-                    {response.status === 'active' ? (
-                      <div className="size-3 rounded-full bg-emerald-600" />
-                    ) : (
-                      <div className="size-3 rounded-full bg-rose-600" />
-                    )}
-                  </TableCell>
-
-                  <TableCell>{response.provider}</TableCell>
-
-                  <TableCell>{response.created_at}</TableCell>
-
-                  <TableCell>{response.expires_at}</TableCell>
-
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <EllipsisVerticalIcon />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>
-                            <CopyIcon />
-                            Copy
-                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Trash2Icon />
-                            Revoke Access
-                            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <UserTokens />
         </CardContent>
 
         <CardFooter className="flex-row items-center justify-between gap-4">
