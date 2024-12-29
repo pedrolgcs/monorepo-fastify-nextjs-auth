@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { verifyJWT } from '@/http/middlewares/verify-jwt'
 import { prisma } from '@/lib/prisma'
 import { FastifyTypedInstance } from '@/types/fastify'
 
@@ -7,7 +8,9 @@ export async function logout(app: FastifyTypedInstance) {
   app.get(
     '/sessions/logout',
     {
+      onRequest: [verifyJWT],
       schema: {
+        security: [{ bearerAuth: [] }],
         operationId: 'logout',
         tags: ['Auth'],
         summary: 'Logout',

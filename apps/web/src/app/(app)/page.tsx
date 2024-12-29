@@ -2,8 +2,8 @@ import { ChevronsLeftIcon, ChevronsRightIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { LogOut } from '@/modules/authentication'
-import { EditUserProfile, UserDetails, UserTokens } from '@/modules/user'
+import { LogOut, ManagerAccessTokens } from '@/modules/authentication'
+import { EditUserProfile, UserDetails } from '@/modules/user'
 
 export default async function Home() {
   return (
@@ -19,7 +19,7 @@ export default async function Home() {
         </CardHeader>
 
         <CardContent>
-          <UserTokens />
+          <ManagerAccessTokens />
         </CardContent>
 
         <CardFooter className="flex-row items-center justify-between gap-4">

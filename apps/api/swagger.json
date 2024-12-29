@@ -254,12 +254,53 @@
         }
       }
     },
+    "/sessions/tokens/{id}/revoke": {
+      "patch": {
+        "operationId": "revokeRefreshToken",
+        "summary": "Revoke refresh token",
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "not": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions/logout": {
       "get": {
         "operationId": "logout",
         "summary": "Logout",
         "tags": [
           "Auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
           "200": {
