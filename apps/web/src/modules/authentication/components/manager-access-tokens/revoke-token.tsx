@@ -16,6 +16,7 @@ import {
   DropdownMenuShortcut,
 } from '@/components/ui/dropdown-menu'
 import { useRevokeRefreshTokenMutation } from '@/http/hooks/use-revoke-refresh-token-mutation'
+import { dispatchKeyboardEvent } from '@/utils/events'
 
 type TokenRowProps = {
   token: {
@@ -38,9 +39,7 @@ export function RevokeToken({ token }: TokenRowProps) {
       {
         onSuccess: () => {
           setTimeout(() => {
-            document.activeElement?.dispatchEvent(
-              new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
-            )
+            dispatchKeyboardEvent('Escape', document.body)
           }, 300)
         },
       },

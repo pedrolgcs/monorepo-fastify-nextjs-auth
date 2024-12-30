@@ -33,6 +33,7 @@ export function useRevokeRefreshTokenMutation() {
               return {
                 ...token,
                 revoked: true,
+                status: 'disabled' as const,
               }
             }
 

@@ -16,6 +16,6 @@ export function useGetTokensByAuthenticatedUser() {
   return useQuery({
     queryKey: key,
     queryFn: () => getTokensByAuthenticatedUser(),
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 0, // No cache
   })
 }
