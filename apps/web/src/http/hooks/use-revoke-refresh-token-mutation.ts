@@ -17,18 +17,22 @@ export function useRevokeRefreshTokenMutation() {
     mutationFn: (params: RevokeRefreshTokenRequest) =>
       revokeRefreshToken(params),
     onSuccess(_, variables) {
-      const tokensByAuthenticatedUserKey: UseGetTokensByAuthenticatedUserQueryKey =
+      const tokensByAuthenticatedUserKey: Partial<UseGetTokensByAuthenticatedUserQueryKey> =
         [GET_TOKENS_BY_AUTHENTICATED_USER_QUERY_KEY]
 
-      queryClient.setQueriesData<GetTokensByAuthenticatedUserResponse>(
-        {
+      const ordersListCache =
+        queryClient.getQueriesData<GetTokensByAuthenticatedUserResponse>({
           queryKey: tokensByAuthenticatedUserKey,
-          exact: true,
-        },
-        (cache) => {
-          if (!cache) return
+        })
 
-          const updatedCache = cache.map((token) => {
+      ordersListCache.forEach((cached) => {
+        const [key, data] = cached
+
+        if (!data) return null
+
+        queryClient.setQueryData<GetTokensByAuthenticatedUserResponse>(key, {
+          ...data,
+          tokens: data.tokens.map((token) => {
             if (token.id === variables.refreshTokenId) {
               return {
                 ...token,
@@ -38,11 +42,9 @@ export function useRevokeRefreshTokenMutation() {
             }
 
             return token
-          })
-
-          return updatedCache
-        },
-      )
+          }),
+        })
+      })
     },
   })
 }
