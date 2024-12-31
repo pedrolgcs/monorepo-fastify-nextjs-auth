@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
 } from '@/components/ui/dropdown-menu'
+import { useShortcut } from '@/hooks/useShortcut'
 
 type CopyTokenToClipboardProps = {
   token: {
@@ -28,6 +29,18 @@ export function CopyTokenToClipboard({ token }: CopyTokenToClipboardProps) {
     })
   }
 
+  useShortcut(['Shift', 'Meta', 'C'], () => {
+    setIsCopied(true)
+
+    navigator.clipboard.writeText(token.token)
+
+    setTimeout(() => {
+      setTimeout(() => {
+        setIsCopied(false)
+      }, 2000)
+    })
+  })
+
   return (
     <DropdownMenuItem onSelect={handleCopyTokenToClipboard}>
       {isCopied ? (
@@ -42,7 +55,7 @@ export function CopyTokenToClipboard({ token }: CopyTokenToClipboardProps) {
         </div>
       )}
 
-      <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+      <DropdownMenuShortcut>⇧⌘C</DropdownMenuShortcut>
     </DropdownMenuItem>
   )
 }

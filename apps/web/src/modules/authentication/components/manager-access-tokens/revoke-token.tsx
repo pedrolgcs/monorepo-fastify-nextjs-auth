@@ -1,4 +1,5 @@
 import { LoaderCircleIcon, LockKeyholeIcon } from 'lucide-react'
+import { useState } from 'react'
 
 import {
   AlertDialog,
@@ -15,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
 } from '@/components/ui/dropdown-menu'
+import { useShortcut } from '@/hooks/useShortcut'
 import { useRevokeRefreshTokenMutation } from '@/http/hooks/use-revoke-refresh-token-mutation'
 import { dispatchKeyboardEvent } from '@/utils/events'
 
@@ -28,12 +30,16 @@ type TokenRowProps = {
 }
 
 export function RevokeToken({ token }: TokenRowProps) {
+  const [openRevokeConfirm, setOpenRevokeConfirm] = useState(false)
+
   const { mutate: revokeRefreshToken, isPending: isPendingOnRevokeToken } =
     useRevokeRefreshTokenMutation()
 
   const isDisabledToRevokeToken = token.isExpired || token.revoked
 
   const handleRevokeToken = async () => {
+    if (isDisabledToRevokeToken) return
+
     revokeRefreshToken(
       { refreshTokenId: token.id },
       {
@@ -46,6 +52,10 @@ export function RevokeToken({ token }: TokenRowProps) {
     )
   }
 
+  useShortcut(['Shift', 'Meta', 'D'], () => {
+    setOpenRevokeConfirm(true)
+  })
+
   if (isPendingOnRevokeToken) {
     return (
       <DropdownMenuItem disabled>
@@ -56,7 +66,7 @@ export function RevokeToken({ token }: TokenRowProps) {
   }
 
   return (
-    <AlertDialog>
+    <AlertDialog open={openRevokeConfirm} onOpenChange={setOpenRevokeConfirm}>
       <AlertDialogTrigger asChild>
         <DropdownMenuItem
           onSelect={(e) => {
@@ -66,7 +76,7 @@ export function RevokeToken({ token }: TokenRowProps) {
         >
           <LockKeyholeIcon />
           Revoke Access
-          <DropdownMenuShortcut>⇧⌘A</DropdownMenuShortcut>
+          <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
         </DropdownMenuItem>
       </AlertDialogTrigger>
 
