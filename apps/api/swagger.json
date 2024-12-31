@@ -174,6 +174,29 @@
         "tags": [
           "Auth"
         ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 1,
+              "default": 1
+            },
+            "in": "query",
+            "name": "page",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 5
+            },
+            "in": "query",
+            "name": "pageSize",
+            "required": false
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -185,68 +208,102 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "token": {
-                        "type": "string"
-                      },
-                      "revoked": {
-                        "type": "boolean"
-                      },
-                      "device": {
-                        "type": "string",
-                        "nullable": true
-                      },
-                      "ipAddress": {
-                        "type": "string",
-                        "nullable": true
-                      },
-                      "createdAt": {
-                        "type": "string",
-                        "format": "date-time"
-                      },
-                      "expiresAt": {
-                        "type": "string",
-                        "format": "date-time"
-                      },
-                      "isExpired": {
-                        "type": "boolean"
-                      },
-                      "status": {
-                        "anyOf": [
-                          {
-                            "type": "string",
-                            "enum": [
-                              "active"
-                            ]
+                  "type": "object",
+                  "properties": {
+                    "tokens": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
                           },
-                          {
+                          "token": {
+                            "type": "string"
+                          },
+                          "revoked": {
+                            "type": "boolean"
+                          },
+                          "device": {
                             "type": "string",
-                            "enum": [
-                              "disabled"
+                            "nullable": true
+                          },
+                          "ipAddress": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "isExpired": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "active"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "disabled"
+                                ]
+                              }
                             ]
                           }
-                        ]
+                        },
+                        "required": [
+                          "id",
+                          "token",
+                          "revoked",
+                          "device",
+                          "ipAddress",
+                          "createdAt",
+                          "expiresAt",
+                          "isExpired",
+                          "status"
+                        ],
+                        "additionalProperties": false
                       }
                     },
-                    "required": [
-                      "id",
-                      "token",
-                      "revoked",
-                      "device",
-                      "ipAddress",
-                      "createdAt",
-                      "expiresAt",
-                      "isExpired",
-                      "status"
-                    ],
-                    "additionalProperties": false
-                  }
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "pageSize": {
+                          "type": "number"
+                        },
+                        "totalCount": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "currentPage",
+                        "totalPages",
+                        "pageSize",
+                        "totalCount"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "tokens",
+                    "meta"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
