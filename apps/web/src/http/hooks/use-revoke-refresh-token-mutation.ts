@@ -33,7 +33,7 @@ export function useRevokeRefreshTokenMutation() {
         queryClient.setQueryData<GetTokensByAuthenticatedUserResponse>(key, {
           ...data,
           tokens: data.tokens.map((token) => {
-            if (token.id === variables.refreshTokenId) {
+            if (token.id === variables.id) {
               return {
                 ...token,
                 revoked: true,

@@ -16,15 +16,17 @@ export type UseGetTokensByAuthenticatedUserQueryKey = [
 export function useGetTokensByAuthenticatedUser(
   params: GetTokensByAuthenticatedUserRequest,
 ) {
+  const { page = 1, pageSize = 5 } = params
+
   const key: UseGetTokensByAuthenticatedUserQueryKey = [
     GET_TOKENS_BY_AUTHENTICATED_USER_QUERY_KEY,
-    params.page,
-    params.pageSize,
+    page,
+    pageSize,
   ]
 
   return useQuery({
     queryKey: key,
-    queryFn: () => getTokensByAuthenticatedUser(params),
+    queryFn: () => getTokensByAuthenticatedUser({ page, pageSize }),
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
 }

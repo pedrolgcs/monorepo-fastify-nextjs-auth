@@ -41,7 +41,7 @@ export function RevokeToken({ token }: TokenRowProps) {
     if (isDisabledToRevokeToken) return
 
     revokeRefreshToken(
-      { refreshTokenId: token.id },
+      { id: token.id },
       {
         onSuccess: () => {
           setTimeout(() => {

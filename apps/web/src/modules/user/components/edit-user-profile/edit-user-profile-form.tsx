@@ -28,8 +28,8 @@ export function EditUserProfileForm() {
   const { register, handleSubmit } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     values: {
-      name: userProfile?.name,
-      profession: userProfile?.profession,
+      name: userProfile?.name ?? undefined,
+      profession: userProfile?.profession ?? undefined,
     },
   })
 

@@ -30,8 +30,8 @@ export function useUpdateUserProfileMutation() {
 
           return {
             ...cache,
-            name: variables.name,
-            profession: variables.profession,
+            name: variables.name ?? null,
+            profession: variables.profession ?? null,
           }
         },
       )
