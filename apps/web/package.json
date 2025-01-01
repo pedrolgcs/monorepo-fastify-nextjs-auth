@@ -7,6 +7,7 @@
     "build": "pnpm env:load next build",
     "start": "pnpm env:load next start",
     "lint": "next lint",
+    "generate:api": "pnpm env:load orval",
     "env:load": "dotenv -e ../../.env --"
   },
   "dependencies": {
@@ -54,6 +55,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv-cli": "8.0.0",
+    "orval": "7.3.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

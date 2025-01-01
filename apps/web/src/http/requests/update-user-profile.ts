@@ -1,10 +1,11 @@
+import type { z } from 'zod'
+
 import { api } from '@/http/api-client'
 
-export type UpdateUserProfileRequest = {
-  id: string
-  name?: string
-  profession?: string
-}
+import { updateProfileBody, updateProfileParams } from '../generated/orval/user'
+
+export type UpdateUserProfileRequest = z.infer<typeof updateProfileBody> &
+  z.infer<typeof updateProfileParams>
 
 export type UpdateUserProfileResponse = void
 

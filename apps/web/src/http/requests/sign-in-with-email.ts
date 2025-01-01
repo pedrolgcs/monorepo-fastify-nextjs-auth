@@ -1,8 +1,10 @@
+import type { z } from 'zod'
+
 import { api } from '@/http/api-client'
 
-export type SignInWithEmailRequest = {
-  email: string
-}
+import { authenticateWithEmailBody } from '../generated/orval/auth'
+
+export type SignInWithEmailRequest = z.infer<typeof authenticateWithEmailBody>
 
 export type SignInWithEmailResponse = void
 

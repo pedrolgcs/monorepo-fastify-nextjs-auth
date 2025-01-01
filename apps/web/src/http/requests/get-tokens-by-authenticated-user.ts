@@ -1,35 +1,24 @@
+import type { z } from 'zod'
+
 import { api } from '@/http/api-client'
 
-export type GetTokensByAuthenticatedUserRequest = {
-  page: number
-  pageSize: number
-}
+import {
+  getTokensByUserQueryParams,
+  getTokensByUserResponse,
+} from '../generated/orval/auth'
 
-export type GetTokensByAuthenticatedUserResponse = {
-  tokens: Array<{
-    id: string
-    token: string
-    revoked: boolean
-    device: string | null
-    ipAddress: string | null
-    createdAt: string
-    expiresAt: string
-    isExpired: boolean
-    userId: string
-    status: 'active' | 'disabled'
-  }>
-  meta: {
-    pageSize: number
-    currentPage: number
-    totalPages: number
-    totalCount: number
-  }
-}
+export type GetTokensByAuthenticatedUserRequest = z.infer<
+  typeof getTokensByUserQueryParams
+>
+
+export type GetTokensByAuthenticatedUserResponse = z.infer<
+  typeof getTokensByUserResponse
+>
 
 export async function getTokensByAuthenticatedUser(
   params: GetTokensByAuthenticatedUserRequest,
 ) {
-  const { page, pageSize } = params
+  const { page = 1, pageSize = 5 } = params
 
   const result = await api
     .get('sessions/tokens', {

@@ -1,12 +1,17 @@
+import type { z } from 'zod'
+
 import { api } from '@/http/api-client'
 
-export type VerifyAuthenticationCodeRequest = {
-  code: string
-}
+import {
+  verifyOPTCodeBody,
+  verifyOPTCodeResponse,
+} from '../generated/orval/auth'
 
-export type VerifyAuthenticationCodeResponse = {
-  token: string
-}
+export type VerifyAuthenticationCodeRequest = z.infer<typeof verifyOPTCodeBody>
+
+export type VerifyAuthenticationCodeResponse = z.infer<
+  typeof verifyOPTCodeResponse
+>
 
 export async function verifyAuthenticationCode(
   params: VerifyAuthenticationCodeRequest,

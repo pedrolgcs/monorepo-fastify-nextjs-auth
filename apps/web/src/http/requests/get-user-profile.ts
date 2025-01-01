@@ -1,11 +1,10 @@
+import type { z } from 'zod'
+
 import { api } from '@/http/api-client'
 
-export type GetUserProfileResponse = {
-  id: string
-  email: string
-  name?: string
-  profession?: string
-}
+import { getProfileResponse } from '../generated/orval/user'
+
+export type GetUserProfileResponse = z.infer<typeof getProfileResponse>
 
 export async function getUserProfile() {
   const result = await api.get('me').json<GetUserProfileResponse>()
