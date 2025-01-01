@@ -1,6 +1,6 @@
+import { env } from '@repo/env'
 import ky, { type HTTPError } from 'ky'
 
-import { API_BASE_URL } from '@/constants/api'
 import { KEYS } from '@/constants/cookies-key'
 import { deleteCookie, getCookie, getCookies, setCookie } from '@/lib/cookies'
 
@@ -15,14 +15,14 @@ const refreshAccessToken = async () => {
   try {
     const { token } = await ky
       .create({ credentials: 'include' })
-      .patch(`${API_BASE_URL}/sessions/refresh`)
+      .patch(`${env.NEXT_PUBLIC_API_URL}/sessions/refresh`)
       .json<RefreshTokenResponse>()
 
     await setCookie(KEYS.TOKEN, token)
   } catch (error) {
     await ky
       .create({ credentials: 'include' })
-      .get(`${API_BASE_URL}/sessions/logout`)
+      .get(`${env.NEXT_PUBLIC_API_URL}/sessions/logout`)
 
     deleteCookie(KEYS.TOKEN)
 
@@ -38,7 +38,7 @@ const refreshAccessToken = async () => {
 }
 
 export const api = ky.create({
-  prefixUrl: API_BASE_URL,
+  prefixUrl: env.NEXT_PUBLIC_API_URL,
   credentials: 'include',
   retry: 0,
   hooks: {

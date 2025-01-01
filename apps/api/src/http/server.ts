@@ -2,9 +2,11 @@ import { writeFile } from 'node:fs/promises'
 import path, { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { env } from '@repo/env'
+
 import { app } from './app'
 
-app.listen({ port: 3333, host: '0.0.0.0' }).then(() => {
+app.listen({ port: env.PORT, host: '0.0.0.0' }).then(() => {
   const spec = app.swagger()
 
   const __filename = fileURLToPath(import.meta.url)
@@ -16,5 +18,5 @@ app.listen({ port: 3333, host: '0.0.0.0' }).then(() => {
     'utf-8',
   )
 
-  console.log('🚀 HTTP Server running on http://localhost:3333')
+  console.log(`🚀 HTTP Server running on port ${env.PORT}`)
 })

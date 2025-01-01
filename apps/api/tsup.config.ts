@@ -6,6 +6,7 @@ export default defineConfig({
   sourcemap: true,
   format: ['esm'],
   clean: true,
+  noExternal: ['@repo/env'],
   loader: {
     '.pug': 'copy',
   },

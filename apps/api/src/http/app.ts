@@ -3,6 +3,7 @@ import fastifyCors from '@fastify/cors'
 import fastifyJWT from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
+import { env } from '@repo/env'
 import { fastify } from 'fastify'
 import {
   jsonSchemaTransform,
@@ -28,7 +29,7 @@ app.register(fastifyCors, {
 
 // JWT
 app.register(fastifyJWT, {
-  secret: 'my-secret',
+  secret: env.JWT_SECRET,
 })
 
 // Cookies
