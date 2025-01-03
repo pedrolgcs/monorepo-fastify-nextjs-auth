@@ -11,7 +11,9 @@
     "db:migrate": "pnpm env:load prisma migrate dev",
     "db:deploy": "pnpm env:load prisma migrate deploy",
     "db:studio": "pnpm env:load prisma studio",
-    "env:load": "dotenv -e ../../.env --"
+    "env:load": "dotenv -e ../../.env --",
+    "test:e2e": "pnpm env:load vitest run --config ./vitest.config.e2e.ts",
+    "test:e2e:watch": "pnpm env:load vitest --config ./vitest.config.e2e.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,9 +25,13 @@
     "@repo/tsconfig": "workspace:*",
     "@types/node": "^20",
     "@types/pug": "2.0.10",
+    "@types/supertest": "6.0.2",
     "dotenv-cli": "8.0.0",
     "prisma": "6.1.0",
-    "tsx": "4.19.2"
+    "supertest": "7.0.0",
+    "tsx": "4.19.2",
+    "vite-tsconfig-paths": "5.1.4",
+    "vitest": "2.1.8"
   },
   "dependencies": {
     "@fastify/cookie": "11.0.1",

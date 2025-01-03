@@ -1,9 +1,11 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { env } from '@repo/env'
 import pug from 'pug'
 import { type CreateEmailResponse, Resend } from 'resend'
 
+import type { MailProvider } from './mail-provider'
 import type { Templates } from './views'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -19,11 +21,11 @@ type SendMailParams = {
   template: Templates
 }
 
-class MailClient {
+class MailClient implements MailProvider {
   private _client: Resend
 
   constructor() {
-    this._client = new Resend('re_K9srbDD4_DMt43krjyPP1AtZGXCYcLbSD')
+    this._client = new Resend(env.RESEND_API_KEY)
   }
 
   async sendEmail(params: SendMailParams): Promise<CreateEmailResponse> {

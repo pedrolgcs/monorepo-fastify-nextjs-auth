@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { MaxRetriesWhenGenerateOPTCodeError } from '@/http/_errors/max-retries-when-generate-opt-code'
 import dayjs from '@/lib/day-js'
 import { prisma } from '@/lib/prisma'
-import { resendMailClient } from '@/providers/mail/resend'
+import { mailClient } from '@/providers/mail/index'
 import { FastifyTypedInstance } from '@/types/fastify'
 import { generateOPTCode } from '@/utils/generate-opt-code'
 import { retryUntilSuccess } from '@/utils/retry-until-success'
@@ -53,20 +53,18 @@ export async function authenticateWithEmail(app: FastifyTypedInstance) {
             },
           })
 
-          if (process.env.NODE_ENV === 'production') {
-            resendMailClient.sendEmail({
-              to: {
-                email: ['delivered@resend.dev'],
+          mailClient.sendEmail({
+            to: {
+              email: ['delivered@resend.dev'],
+            },
+            subject: 'OPT Code',
+            template: {
+              file: 'send-opt-code',
+              variables: {
+                code,
               },
-              subject: 'OPT Code',
-              template: {
-                file: 'send-opt-code',
-                variables: {
-                  code,
-                },
-              },
-            })
-          }
+            },
+          })
         }, MAX_RETRIES_WHEN_GENERATE_OPT_CODE)
       } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
