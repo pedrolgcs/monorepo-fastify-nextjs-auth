@@ -28,6 +28,7 @@ describe('[Auth] - Get tokens by user', () => {
     const sut = await request(app.server)
       .get('/sessions/tokens')
       .set('Authorization', `Bearer ${token}`)
+
     expect(sut.body.tokens).toHaveLength(1)
 
     expect(sut.body.tokens).toEqual(

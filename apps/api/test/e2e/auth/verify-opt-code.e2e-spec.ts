@@ -26,10 +26,13 @@ describe('[Auth] - Authenticate with e-mail', () => {
     const cookies = sut.get('Set-Cookie')
 
     expect(cookies).toBeDefined()
+
     expect(cookies?.some((cookie) => cookie.startsWith('refreshToken='))).toBe(
       true,
     )
+
     expect(sut.body).toHaveProperty('token')
+
     expect(sut.statusCode).toEqual(200)
   })
 })
