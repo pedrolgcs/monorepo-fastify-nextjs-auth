@@ -5,15 +5,16 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "env:load": "dotenv -e ../../.env --",
+    "env-test:load": "dotenv -e ../../.env.test --",
     "dev": "pnpm env:load tsx watch src/http/server.ts",
     "build": "tsup",
     "start": "node dist/http/server.js",
     "db:migrate": "pnpm env:load prisma migrate dev",
     "db:deploy": "pnpm env:load prisma migrate deploy",
     "db:studio": "pnpm env:load prisma studio",
-    "env:load": "dotenv -e ../../.env --",
-    "test:e2e": "pnpm env:load vitest run --config ./vitest.config.e2e.ts",
-    "test:e2e:watch": "pnpm env:load vitest --config ./vitest.config.e2e.ts"
+    "test:e2e": "pnpm env-test:load vitest run --config ./vitest.config.e2e.ts",
+    "test:e2e:watch": "pnpm env-test:load vitest --config ./vitest.config.e2e.ts"
   },
   "keywords": [],
   "author": "",
