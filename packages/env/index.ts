@@ -6,8 +6,8 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
     PORT: z.coerce.number().default(3333),
     JWT_SECRET: z.string(),
-    MAIL_PROVIDER: z.enum(['mailtrap', 'resend']).default('mailtrap'),
-    RESEND_API_KEY: z.string().optional(),
+    MAIL_PROVIDER: z.enum(['fake', 'resend']).default('fake'),
+    RESEND_API_KEY: z.string(),
   },
 
   client: {},
