@@ -41,10 +41,6 @@ export async function verifyOPTCode(app: FastifyTypedInstance) {
         throw new BadRequestError('invalid credentials.')
       }
 
-      if (optCode.usedAt) {
-        throw new BadRequestError('code has been used.')
-      }
-
       const now = dayjs()
 
       if (now.isAfter(optCode.expiresAt)) {
@@ -61,12 +57,9 @@ export async function verifyOPTCode(app: FastifyTypedInstance) {
         throw new BadRequestError('invalid credentials.')
       }
 
-      await prisma.optCode.update({
+      await prisma.optCode.delete({
         where: {
           code,
-        },
-        data: {
-          usedAt: now.toDate(),
         },
       })
 

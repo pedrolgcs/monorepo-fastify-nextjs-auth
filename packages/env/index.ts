@@ -8,6 +8,8 @@ export const env = createEnv({
     JWT_SECRET: z.string(),
     MAIL_PROVIDER: z.enum(['fake', 'resend']).default('fake'),
     RESEND_API_KEY: z.string(),
+    ENV_TYPE: z.enum(['staging', 'production']).default('staging'),
+    STAGING_API_TOKEN: z.string().optional(),
   },
 
   client: {},
@@ -23,5 +25,7 @@ export const env = createEnv({
     MAIL_PROVIDER: process.env.MAIL_PROVIDER,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    ENV_TYPE: process.env.ENV_TYPE,
+    STAGING_API_TOKEN: process.env.STAGING_API_TOKEN,
   },
 })

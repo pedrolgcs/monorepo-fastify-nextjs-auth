@@ -21,13 +21,12 @@ model User {
 }
 
 model OptCode {
-  id        String    @id @default(uuid())
-  code      String    @unique
+  id        String   @id @default(uuid())
+  code      String   @unique
   email     String
-  expiresAt DateTime  @map("expires_at")
-  usedAt    DateTime? @map("used_at")
-  ipAddress String?   @map("id_address")
-  createdAt DateTime  @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
+  ipAddress String?  @map("id_address")
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("otp_codes")
 }
