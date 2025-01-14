@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "env:load": "dotenv -e ../../.env --",
+    "env-test:load": "dotenv -e ../../.env.test --",
     "dev": "pnpm env:load next dev --turbopack",
     "build": "pnpm env:load next build",
     "start": "pnpm env:load next start",
     "lint": "next lint",
     "generate:api": "pnpm env:load orval",
-    "test:e2e": "pnpm env:load playwright test --ui"
+    "test:e2e": "pnpm env-test:load playwright test --ui"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.1",
