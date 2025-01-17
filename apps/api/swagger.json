@@ -497,6 +497,16 @@
           },
           "required": true
         },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "x-staging-token",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Default Response",
