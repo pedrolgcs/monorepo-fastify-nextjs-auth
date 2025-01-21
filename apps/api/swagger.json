@@ -470,6 +470,70 @@
         }
       }
     },
+    "/sandbox/sign-in": {
+      "post": {
+        "operationId": "signIn",
+        "summary": "Sign in",
+        "tags": [
+          "Sandbox"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "agent": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "agent"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "x-staging-token",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "token"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sandbox/generate-opt-code": {
       "post": {
         "operationId": "generateOptCode",
@@ -523,6 +587,57 @@
                     "code"
                   ],
                   "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandbox/clear-access-by-user": {
+      "post": {
+        "operationId": "clearAccessByUser",
+        "summary": "Clear access by user",
+        "tags": [
+          "Sandbox"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                },
+                "required": [
+                  "email"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "x-staging-token",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "not": {}
                 }
               }
             }

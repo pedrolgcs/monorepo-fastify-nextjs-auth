@@ -2,7 +2,7 @@ import { env } from '@repo/env'
 
 import { FastifyTypedInstance } from '@/types/fastify'
 
-import { generateOptCode } from './__sandbox/generate-opt-code'
+import { sandBoxRoutes } from './__sandbox'
 import { authenticateWithEmail } from './auth/authenticate-with-email'
 import { getTokensByUser } from './auth/get-tokens-by-user'
 import { logout } from './auth/logout'
@@ -27,6 +27,6 @@ export async function routes(app: FastifyTypedInstance) {
   updateUserProfile(app)
 
   if (env.ENV_TYPE === 'staging') {
-    generateOptCode(app)
+    sandBoxRoutes(app)
   }
 }

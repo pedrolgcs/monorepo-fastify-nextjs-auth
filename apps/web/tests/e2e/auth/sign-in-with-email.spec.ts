@@ -1,8 +1,13 @@
+import { faker } from '@faker-js/faker'
 import { expect, test } from '@playwright/test'
+import { makeOptCode } from 'tests/api/make-opt-code'
+import { resetAccessByUser } from 'tests/api/reset-access-by-user'
 
 test.describe('[AUTH]', () => {
-  test.afterEach(async ({ page }) => {
-    await page.waitForTimeout(1000)
+  const email = faker.internet.email()
+
+  test.afterAll(async () => {
+    await resetAccessByUser(email)
   })
 
   test('should be able to request a OPT code', async ({ page }) => {
@@ -10,7 +15,7 @@ test.describe('[AUTH]', () => {
       waitUntil: 'networkidle',
     })
 
-    await page.locator('input[name="email"]').fill('johndoe@gmail.com')
+    await page.locator('input[name="email"]').fill(email)
     await page.getByRole('button', { name: 'sign in with e-mail' }).click()
 
     await page.waitForURL('**/auth/verify')
@@ -23,17 +28,7 @@ test.describe('[AUTH]', () => {
       waitUntil: 'networkidle',
     })
 
-    const { code } = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/sandbox/generate-opt-code`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-staging-token': `${process.env.STAGING_API_TOKEN}`,
-        },
-        body: JSON.stringify({ email: 'johndoe@gmail.com' }),
-      },
-    ).then((response) => response.json())
+    const { code } = await makeOptCode(email)
 
     await page.locator('input[name="code"]').fill(code)
 

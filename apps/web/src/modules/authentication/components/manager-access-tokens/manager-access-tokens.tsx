@@ -150,6 +150,7 @@ export function ManagerAccessTokens() {
             size="icon"
             onClick={handleNavigateToPreviousPage}
             disabled={isFistPage}
+            data-testid="previous-page-button"
           >
             <ChevronsLeftIcon />
           </Button>
@@ -159,6 +160,7 @@ export function ManagerAccessTokens() {
             size="icon"
             onClick={handleNavigateToNextPage}
             disabled={isLastPage}
+            data-testid="next-page-button"
           >
             <ChevronsRightIcon />
           </Button>
