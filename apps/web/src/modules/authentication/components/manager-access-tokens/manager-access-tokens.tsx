@@ -64,7 +64,7 @@ export function ManagerAccessTokens() {
 
   return (
     <div className="space-y-4">
-      <Table>
+      <Table data-testid="access-tokens-table">
         <TableHeader>
           <TableRow>
             <TableHead>Status</TableHead>
