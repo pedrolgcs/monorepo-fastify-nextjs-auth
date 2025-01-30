@@ -2,11 +2,10 @@ import crypto from 'node:crypto'
 
 import { z } from 'zod'
 
-import { BadRequestError } from '@/http/_errors/bad-request-error'
-import dayjs from '@/lib/day-js'
-import { prisma } from '@/lib/prisma'
+import { CreateRefreshTokenUseCase } from '@/modules/auth/use-cases/create-refresh-token-use-case'
+import { GetOptCodeUseCase } from '@/modules/auth/use-cases/get-opt-code-use-case'
+import { GetUserByEmailUseCase } from '@/modules/user/get-user-by-email-use-case'
 import { FastifyTypedInstance } from '@/types/fastify'
-import { getBrowserDevice } from '@/utils/browser-device'
 
 const bodySchema = z.object({
   code: z.string(),
@@ -31,36 +30,14 @@ export async function verifyOPTCode(app: FastifyTypedInstance) {
     async (request, reply) => {
       const { code } = request.body
 
-      const optCode = await prisma.optCode.findUnique({
-        where: {
-          code,
-        },
-      })
+      const getOptCodeUseCase = new GetOptCodeUseCase()
 
-      if (!optCode) {
-        throw new BadRequestError('invalid credentials.')
-      }
+      const { code: optCode } = await getOptCodeUseCase.execute({ code })
 
-      const now = dayjs()
+      const getUserByEmailUseCase = new GetUserByEmailUseCase()
 
-      if (now.isAfter(optCode.expiresAt)) {
-        throw new BadRequestError('code has been expired.')
-      }
-
-      const user = await prisma.user.findUnique({
-        where: {
-          email: optCode.email,
-        },
-      })
-
-      if (!user) {
-        throw new BadRequestError('invalid credentials.')
-      }
-
-      await prisma.optCode.delete({
-        where: {
-          code,
-        },
+      const { user } = await getUserByEmailUseCase.execute({
+        email: optCode.email,
       })
 
       const refreshTokenId = crypto.randomUUID()
@@ -87,15 +64,14 @@ export async function verifyOPTCode(app: FastifyTypedInstance) {
         ),
       ])
 
-      await prisma.refreshToken.create({
-        data: {
-          id: refreshTokenId,
-          token: refreshToken,
-          expiresAt: dayjs().add(7, 'day').toDate(),
-          ipAddress: request.ip,
-          userId: user.id,
-          device: getBrowserDevice(request.headers['user-agent']).name,
-        },
+      const createRefreshTokenUseCase = new CreateRefreshTokenUseCase()
+
+      await createRefreshTokenUseCase.execute({
+        tokenId: refreshTokenId,
+        userId: user.id,
+        token: refreshToken,
+        ipAddress: request.ip,
+        userAgent: request.headers['user-agent'],
       })
 
       return reply
