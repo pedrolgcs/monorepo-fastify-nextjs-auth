@@ -1,3 +1,5 @@
+import '../events/listener/audit-listener'
+
 import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
 import fastifyJWT from '@fastify/jwt'

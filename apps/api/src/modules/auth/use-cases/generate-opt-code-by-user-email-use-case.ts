@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 
+import { eventAudit } from '@/events/events'
 import dayjs from '@/lib/day-js'
 import { prisma } from '@/lib/prisma'
 import type { MailProvider } from '@/providers/mail/mail-provider'
@@ -8,21 +9,21 @@ import { retryUntilSuccess } from '@/utils/retry-until-success'
 
 import { MaxRetriesWhenGenerateOPTCodeError } from './_errors/max-retries-when-generate-opt-code'
 
-type AuthenticateWithEmailUseCaseRequest = {
+type GenerateOptCodeByUserEmailRequest = {
   email: string
   ipAddress: string
 }
 
-type AuthenticateWithEmailUseCaseResponse = void
+type GenerateOptCodeByUserEmailResponse = void
 
 const MAX_RETRIES_WHEN_GENERATE_OPT_CODE = 3
 
-export class AuthenticateWithEmailUseCase {
+export class GenerateOptCodeByUserEmailUseCase {
   constructor(private readonly mailClient: MailProvider) {}
 
   public async execute(
-    request: AuthenticateWithEmailUseCaseRequest,
-  ): Promise<AuthenticateWithEmailUseCaseResponse> {
+    request: GenerateOptCodeByUserEmailRequest,
+  ): Promise<GenerateOptCodeByUserEmailResponse> {
     const { email, ipAddress } = request
 
     await prisma.user.upsert({
@@ -68,5 +69,13 @@ export class AuthenticateWithEmailUseCase {
 
       throw error
     }
+
+    eventAudit.emit('audit', {
+      action: 'generate-opt-code',
+      data: {
+        email,
+        ipAddress,
+      },
+    })
   }
 }

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { AuthenticateWithEmailUseCase } from '@/modules/auth/use-cases/authentication-with-email-use-case'
+import { GenerateOptCodeByUserEmailUseCase } from '@/modules/auth/use-cases/generate-opt-code-by-user-email-use-case'
 import { mailClient } from '@/providers/mail/index'
 import { FastifyTypedInstance } from '@/types/fastify'
 
@@ -25,11 +25,10 @@ export async function authenticateWithEmail(app: FastifyTypedInstance) {
     async (request, reply) => {
       const { email } = request.body
 
-      const authenticateWithEmailUseCase = new AuthenticateWithEmailUseCase(
-        mailClient,
-      )
+      const generateOptCodeByUserEmailUseCase =
+        new GenerateOptCodeByUserEmailUseCase(mailClient)
 
-      await authenticateWithEmailUseCase.execute({
+      await generateOptCodeByUserEmailUseCase.execute({
         email,
         ipAddress: request.ip,
       })
