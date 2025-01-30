@@ -5,6 +5,7 @@ export class MaxRetriesWhenGenerateOPTCodeError extends AppError {
     super(
       message ??
         'unable to generate a unique OTP code after multiple retry attempts.',
+      422,
     )
   }
 }
