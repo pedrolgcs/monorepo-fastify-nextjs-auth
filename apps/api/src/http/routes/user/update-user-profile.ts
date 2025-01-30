@@ -2,9 +2,8 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
-import { BadRequestError } from '@/http/_errors/bad-request-error'
 import { verifyJWT } from '@/http/middlewares/verify-jwt'
-import { prisma } from '@/lib/prisma'
+import { UpdateUserByIdUseCase } from '@/modules/user/update-user-by-id-use-case'
 
 const bodySchema = z.object({
   name: z.string().optional(),
@@ -37,24 +36,12 @@ export async function updateUserProfile(app: FastifyInstance) {
 
       const { name, profession } = bodySchema.parse(request.body)
 
-      const user = await prisma.user.findUnique({
-        where: {
-          id,
-        },
-      })
+      const updateUserByIdUseCase = new UpdateUserByIdUseCase()
 
-      if (!user) {
-        throw new BadRequestError('user not found')
-      }
-
-      await prisma.user.update({
-        where: {
-          id,
-        },
-        data: {
-          name,
-          profession,
-        },
+      await updateUserByIdUseCase.execute({
+        id,
+        name,
+        profession,
       })
 
       return reply.status(204).send()

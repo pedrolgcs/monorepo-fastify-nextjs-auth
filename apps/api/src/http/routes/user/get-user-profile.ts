@@ -2,9 +2,8 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
-import { BadRequestError } from '@/http/_errors/bad-request-error'
 import { verifyJWT } from '@/http/middlewares/verify-jwt'
-import { prisma } from '@/lib/prisma'
+import { GetUserByIdUseCase } from '@/modules/user/get-user-by-id-use-case'
 
 export async function getUserProfile(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
@@ -29,15 +28,9 @@ export async function getUserProfile(app: FastifyInstance) {
     async (request, reply) => {
       const { sub: userId } = request.user
 
-      const user = await prisma.user.findUnique({
-        where: {
-          id: userId,
-        },
-      })
+      const getUserByIdUseCase = new GetUserByIdUseCase()
 
-      if (!user) {
-        throw new BadRequestError('user not found')
-      }
+      const { user } = await getUserByIdUseCase.execute({ id: userId })
 
       return reply.status(200).send({
         id: user.id,
