@@ -1,8 +1,7 @@
 import { z } from 'zod'
 
-import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { verifyJWT } from '@/http/middlewares/verify-jwt'
-import { prisma } from '@/lib/prisma'
+import { RevokeRefreshTokenUseCase } from '@/modules/auth/use-cases/revoke-refresh-token-use-case'
 import { FastifyTypedInstance } from '@/types/fastify'
 
 const paramsSchema = z.object({
@@ -28,33 +27,13 @@ export async function revokeRefreshToken(app: FastifyTypedInstance) {
     async (request, reply) => {
       const { sub: userId } = request.user
 
-      const { id } = paramsSchema.parse(request.params)
+      const { id: refreshTokenId } = paramsSchema.parse(request.params)
 
-      const refreshToken = await prisma.refreshToken.findUnique({
-        where: {
-          id,
-        },
-      })
+      const revokeRefreshTokenUseCase = new RevokeRefreshTokenUseCase()
 
-      if (!refreshToken) {
-        throw new UnauthorizedError(
-          'refresh token is either missing, invalid, or expired.',
-        )
-      }
-
-      if (refreshToken.userId !== userId) {
-        throw new UnauthorizedError(
-          "refresh token doesn't belong to the current user.",
-        )
-      }
-
-      await prisma.refreshToken.update({
-        where: {
-          id,
-        },
-        data: {
-          revoked: true,
-        },
+      await revokeRefreshTokenUseCase.execute({
+        refreshTokenId,
+        userId,
       })
 
       return reply.status(200).send()

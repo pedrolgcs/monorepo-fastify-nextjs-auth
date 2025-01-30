@@ -8,7 +8,7 @@ prisma = new PrismaClient({
 
 function resetPrismaClientInstance() {
   prisma = new PrismaClient({
-    log: ['query'],
+    // log: ['query'],
   })
 }
 

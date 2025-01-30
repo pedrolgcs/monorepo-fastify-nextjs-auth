@@ -4,7 +4,8 @@ import { z } from 'zod'
 
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import dayjs from '@/lib/day-js'
-import { prisma } from '@/lib/prisma'
+import { CreateRefreshTokenUseCase } from '@/modules/auth/use-cases/create-refresh-token-use-case'
+import { GetRefreshAccessTokenUseCase } from '@/modules/auth/use-cases/get-refresh-access-token-use-case'
 import { FastifyTypedInstance } from '@/types/fastify'
 import { getBrowserDevice } from '@/utils/browser-device'
 
@@ -40,27 +41,11 @@ export async function refreshToken(app: FastifyTypedInstance) {
         )
       }
 
-      const refreshToken = await prisma.refreshToken.findUnique({
-        where: {
-          id: refreshTokenId,
-        },
+      const getRefreshTokenUseCase = new GetRefreshAccessTokenUseCase()
+
+      const { refreshToken, user } = await getRefreshTokenUseCase.execute({
+        refreshTokenId,
       })
-
-      if (!refreshToken || refreshToken.revoked) {
-        throw new UnauthorizedError(
-          'refresh token is either missing, invalid, or expired.',
-        )
-      }
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: refreshToken.userId,
-        },
-      })
-
-      if (!user) {
-        throw new UnauthorizedError('invalid credentials.')
-      }
 
       const now = dayjs()
 
@@ -80,15 +65,14 @@ export async function refreshToken(app: FastifyTypedInstance) {
           },
         )
 
-        await prisma.refreshToken.create({
-          data: {
-            id: newRefreshTokenId,
-            token: refreshTokenToBeSent,
-            userId: user.id,
-            expiresAt: dayjs().add(7, 'day').toDate(),
-            device: getBrowserDevice(request.headers['user-agent']).name,
-            ipAddress: request.ip,
-          },
+        const createRefreshTokenUseCase = new CreateRefreshTokenUseCase()
+
+        await createRefreshTokenUseCase.execute({
+          tokenId: newRefreshTokenId,
+          token: refreshTokenToBeSent,
+          userId: user.id,
+          userAgent: getBrowserDevice(request.headers['user-agent']).name,
+          ipAddress: request.ip,
         })
       }
 

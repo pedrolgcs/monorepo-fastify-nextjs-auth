@@ -15,9 +15,9 @@ describe('[Auth] - Revoke refresh token', () => {
   })
 
   it('should be able to revoke refresh token', async () => {
-    await makeUser()
+    await makeUser('pedro@gmail.com')
 
-    const optCode = await makeOptCode()
+    const optCode = await makeOptCode('pedro@gmail.com')
 
     const {
       body: { token },
