@@ -1,4 +1,6 @@
-export class MaxRetriesWhenGenerateOPTCodeError extends Error {
+import { AppError } from '@/http/_errors/app-error'
+
+export class MaxRetriesWhenGenerateOPTCodeError extends AppError {
   constructor(message?: string) {
     super(
       message ??

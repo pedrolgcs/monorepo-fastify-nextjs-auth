@@ -1,8 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod'
 
-import { BadRequestError } from './_errors/bad-request-error'
-import { MaxRetriesWhenGenerateOPTCodeError } from './_errors/max-retries-when-generate-opt-code'
+import { AppError } from './_errors/app-error'
 import { UnauthorizedError } from './_errors/unauthorized-error'
 
 type FastifyErrorhandler = FastifyInstance['errorHandler']
@@ -22,20 +21,16 @@ export const errorhandler: FastifyErrorhandler = (error, request, reply) => {
     })
   }
 
-  if (error instanceof BadRequestError) {
-    return reply.status(400).send({
-      message: error.message,
+  if (error instanceof AppError) {
+    const errorData = error.toJSON()
+
+    return reply.status(400).code(errorData.code).send({
+      message: errorData.message,
     })
   }
 
   if (error instanceof UnauthorizedError) {
     return reply.status(401).send({
-      message: error.message,
-    })
-  }
-
-  if (error instanceof MaxRetriesWhenGenerateOPTCodeError) {
-    return reply.status(422).send({
       message: error.message,
     })
   }
