@@ -1,7 +1,8 @@
 import dayjs from '@/lib/day-js'
 import { prisma } from '@/lib/prisma'
 
-import { BadRequestError } from './_errors/bad-request-error'
+import { OptCodeExpiredError } from './_errors/opt-code-expired-error'
+import { OptCodeNotFoundError } from './_errors/opt-code-not-found-error'
 
 type GetOptCodeUseCaseRequest = {
   code: string
@@ -31,13 +32,13 @@ export class GetOptCodeUseCase {
     })
 
     if (!optCode) {
-      throw new BadRequestError('code not found.')
+      throw new OptCodeNotFoundError()
     }
 
     const now = dayjs()
 
     if (now.isAfter(optCode.expiresAt)) {
-      throw new BadRequestError('code has been expired.')
+      throw new OptCodeExpiredError()
     }
 
     return {

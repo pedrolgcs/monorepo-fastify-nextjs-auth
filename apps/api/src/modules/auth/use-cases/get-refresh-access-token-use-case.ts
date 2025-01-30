@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 
-import { UnauthorizedError } from './_errors/unauthorized-error'
+import { RefreshTokenNotFoundError } from './_errors/refresh-token-not-found-error'
+import { UserNotFoundError } from './_errors/user-not-found-error'
 
 type GetRefreshAccessTokenUseCaseRequest = {
   refreshTokenId: string
@@ -34,9 +35,7 @@ export class GetRefreshAccessTokenUseCase {
     })
 
     if (!refreshToken || refreshToken.revoked) {
-      throw new UnauthorizedError(
-        'refresh token is either missing, invalid, or expired.',
-      )
+      throw new RefreshTokenNotFoundError()
     }
 
     const user = await prisma.user.findUnique({
@@ -46,7 +45,7 @@ export class GetRefreshAccessTokenUseCase {
     })
 
     if (!user) {
-      throw new UnauthorizedError('invalid credentials.')
+      throw new UserNotFoundError()
     }
 
     return {

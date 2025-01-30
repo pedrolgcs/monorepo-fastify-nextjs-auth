@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 
-import { BadRequestError } from './_errors/bad-request-error'
+import { UserNotFoundError } from './_errors/user-not-found-error'
 
 type UpdateUserByIdUseCaseRequest = {
   id: string
@@ -19,7 +19,7 @@ export class UpdateUserByIdUseCase {
     })
 
     if (!user) {
-      throw new BadRequestError('user not found')
+      throw new UserNotFoundError()
     }
 
     await prisma.user.update({

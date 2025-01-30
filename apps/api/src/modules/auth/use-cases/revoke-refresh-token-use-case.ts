@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 
-import { UnauthorizedError } from './_errors/unauthorized-error'
+import { RefreshTokenNotFoundError } from './_errors/refresh-token-not-found-error'
 
 type RevokeRefreshTokenUseCaseRequest = {
   refreshTokenId: string
@@ -22,15 +22,11 @@ export class RevokeRefreshTokenUseCase {
     })
 
     if (!refreshToken) {
-      throw new UnauthorizedError(
-        'refresh token is either missing, invalid, or expired.',
-      )
+      throw new RefreshTokenNotFoundError()
     }
 
     if (refreshToken.userId !== userId) {
-      throw new UnauthorizedError(
-        "refresh token doesn't belong to the current user.",
-      )
+      throw new RefreshTokenNotFoundError()
     }
 
     await prisma.refreshToken.update({

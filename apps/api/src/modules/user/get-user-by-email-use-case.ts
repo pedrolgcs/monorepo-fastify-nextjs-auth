@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 
-import { BadRequestError } from './_errors/bad-request-error'
+import { UserNotFoundError } from './_errors/user-not-found-error'
 
 type GetUserByEmailUseCaseRequest = {
   email: string
@@ -30,7 +30,7 @@ export class GetUserByEmailUseCase {
     })
 
     if (!user) {
-      throw new BadRequestError('code not found.')
+      throw new UserNotFoundError()
     }
 
     return {
